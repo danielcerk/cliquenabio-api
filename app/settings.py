@@ -31,13 +31,15 @@ INSTALLED_APPS = [
     'api.links',
     'api.product',
     'api.profile_user',
+    'api.status',
     'api.subscriptions',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'dj_rest_auth'
+    'dj_rest_auth',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -160,6 +162,13 @@ else:
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CliqueNaBio - API',
+    'DESCRIPTION': 'API V1 oficial do aplicativo CliqueNaBio',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -168,7 +177,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5
+    'PAGE_SIZE': 5,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 SIMPLE_JWT = {
