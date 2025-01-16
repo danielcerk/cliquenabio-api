@@ -46,6 +46,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['name']
 
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
 	is_active = models.BooleanField(default=True, verbose_name="Está ativo")
 	is_staff = models.BooleanField(default=False)
 	is_superuser = models.BooleanField(default=False)
@@ -63,3 +66,4 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 	class Meta:
 
 		verbose_name = 'Usuário'
+
