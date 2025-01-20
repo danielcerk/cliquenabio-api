@@ -8,10 +8,14 @@ from rest_framework.permissions import (
     SAFE_METHODS
 
 )
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from rest_framework import status
 from .utils import update_subscription_plan
-from .models import Subscription
+from .models import Subscription, Plan, Plans
+
+User = get_user_model()
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 webhook_secret_key = settings.STRIPE_ENDPOINT_SECRET
@@ -25,6 +29,56 @@ class IsAuthorOrReadOnly(BasePermission):
             return True
 
         return obj.created_by == request.user
+
+
+class GetPlansAPIView(APIView):   
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+
+            prices = stripe.Price.list()
+            products = stripe.Product.list()
+
+            product_map = {product['id']: product for product in products['data']}
+
+            plans = []
+
+            for price in prices['data']:
+
+                product = product_map.get(price['product'], {})
+
+                if product.get('name') in ['Influência', 'Conexão']:
+
+                    plans.append({
+                        "id": price['id'],
+                        "name": product.get('name', 'Sem nome'),
+                        "description": product.get('description', 'Sem descrição'),
+                        "price": price['unit_amount'],
+                        "currency": price['currency'],
+                        "interval": price['recurring']['interval'] if price.get('recurring') else None
+                    })
+
+            return Response(plans, status=200)
+        
+        except Exception as e:
+
+            return Response({"error": str(e)}, status=500)
+
+class PlanUserAPIView(APIView):
+
+    def get(self, request, id, *args, **kwargs):
+
+        user = get_object_or_404(User, id=id)
+
+        subscription = get_object_or_404(Subscription,user=user)
+
+        return Response(
+            {
+                'name': subscription.name,
+                'status': 'ativo' if subscription.active == True else 'inativo'
+            }
+        )
 
 class CreateSubscriptionAPIView(APIView):
 
@@ -51,11 +105,11 @@ class CreateSubscriptionAPIView(APIView):
 
         if product.get('name') == 'Conexão':
 
-            subscription.plan = subscription.Plan.CONEXAO
+            subscription.name = Plan.CONEXAO
 
         elif product.get('name') == 'Influência':
 
-            subscription.plan = subscription.Plan.INFLUENCIA
+            subscription.name = Plan.INFLUENCIA
 
         else:
 
@@ -79,7 +133,7 @@ class CancelSubscriptionAPIView(APIView):
 
         stripe.Subscription.delete(subscription.stripe_subscription_id)
 
-        subscription.plan = subscription.Plan.GRATIS
+        subscription.name = Plan.GRATIS
         subscription.active = True
 
         subscription.save()
@@ -87,6 +141,8 @@ class CancelSubscriptionAPIView(APIView):
         return Response({"message": "Assinatura cancelada com sucesso"})
 
 class AttachPaymentMethodAPIView(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request):
 
@@ -115,6 +171,8 @@ class AttachPaymentMethodAPIView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdatePlanAPIView(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
     def post(self, request, *args, **kwargs):
 
