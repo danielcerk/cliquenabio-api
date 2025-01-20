@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'api.analytics',
     'api.auth',
     'api.links',
-    'api.product',
+    'api.snaps',
     'api.profile_user',
     'api.status',
     'api.subscriptions',
