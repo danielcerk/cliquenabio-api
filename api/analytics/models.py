@@ -6,8 +6,8 @@ User = get_user_model()
 
 class AnalyticProfileViews(models.Model):
 
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
-    number = models.PositiveBigIntegerField(default=0)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuário')
+    number = models.PositiveBigIntegerField(default=0, verbose_name='Número')
 
     class Meta:
 
@@ -19,9 +19,9 @@ class AnalyticProfileViews(models.Model):
 
 class Analytic(models.Model):
     
-    route = models.CharField(max_length=255, unique=False)
-    month = models.PositiveSmallIntegerField()
-    year = models.PositiveIntegerField()
+    route = models.CharField(max_length=255, unique=False, verbose_name='Rota de perfil')
+    month = models.PositiveSmallIntegerField(verbose_name='Mês de criação')
+    year = models.PositiveIntegerField(verbose_name='Ano de criação')
 
     class Meta:
 

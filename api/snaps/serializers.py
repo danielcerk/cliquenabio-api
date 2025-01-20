@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import Product
+from .models import Snap
 from api.firebase import FirebaseManager
 
-class ProductSerializer(serializers.ModelSerializer):
+class SnapSerializer(serializers.ModelSerializer):
 
     owner = serializers.CharField(
         source='created_by.name', read_only=True
@@ -12,7 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
 
-        model = Product
+        model = Snap
         fields = ['id', 'name', 'small_description', 
                   'owner', 'image', 'image_upload',
                     'created_by', 'created_at']
@@ -24,7 +24,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         image_upload = validated_data.pop('image_upload', None)
-        product = Product(**validated_data)
+        snap = Snap(**validated_data)
 
         if image_upload:
 
@@ -34,11 +34,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
             if image_url:
 
-                product.image = image_url
+                snap.image = image_url
 
-        product.save()
+        snap.save()
 
-        return product
+        return snap
 
     def update(self, instance, validated_data):
 

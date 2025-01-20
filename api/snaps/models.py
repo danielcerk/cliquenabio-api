@@ -5,10 +5,10 @@ from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
-class Product(models.Model):
+class Snap(models.Model):
 
     created_by = models.ForeignKey(User, 
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE, verbose_name='Usuário')
 
     name = models.CharField(max_length=55,
         verbose_name='Nome', null=False, blank=False)
@@ -26,8 +26,8 @@ class Product(models.Model):
     
     class Meta:
 
-        verbose_name = 'Produto'
-        verbose_name_plural = 'Produtos'
+        verbose_name = 'Snap'
+        verbose_name_plural = 'Snaps'
 
     def save(self, *args, **kwargs):
 
@@ -35,18 +35,18 @@ class Product(models.Model):
 
             try:
 
-                product_count = ProductCount.objects.get(owner=self.created_by)
+                snap_count = SnapCount.objects.get(owner=self.created_by)
 
-            except ProductCount.DoesNotExist:
+            except SnapCount.DoesNotExist:
 
                 raise ValidationError('Perfil associado ao usuário não encontrado.')
 
-            if product_count.number >= 10:
+            if snap_count.number >= 10:
 
-                raise ValidationError('Você não pode adicionar mais de 10 produtos.')
+                raise ValidationError('Você não pode adicionar mais de 10 Snaps.')
 
-            product_count.number += 1
-            product_count.save()
+            snap_count.number += 1
+            snap_count.save()
 
         super().save(*args, **kwargs)
 
@@ -55,16 +55,16 @@ class Product(models.Model):
         
         try:
 
-            product_count = ProductCount.objects.get(owner=self.created_by)
+            snap_count = SnapCount.objects.get(owner=self.created_by)
 
-        except ProductCount.DoesNotExist:
+        except SnapCount.DoesNotExist:
             
             raise ValidationError('Perfil associado ao usuário não encontrado.')
 
-        if product_count.number > 0:
+        if snap_count.number > 0:
 
-            product_count.number -= 1
-            product_count.save()
+            snap_count.number -= 1
+            snap_count.save()
 
         super().delete(*args, **kwargs)
 
@@ -73,11 +73,17 @@ class Product(models.Model):
 
         return '%s criado por %s' % (self.name, self.created_by.name)
     
-class ProductCount(models.Model):
+class SnapCount(models.Model):
 
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
-    number = models.PositiveBigIntegerField(default=0)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuário')
+    number = models.PositiveBigIntegerField(default=0, verbose_name='Número')
+
+    class Meta:
+
+        verbose_name = 'Contagem de snap'
+        verbose_name_plural = 'Contagem de snaps'
+        ordering = ['-number']
 
     def __str__(self):
 
-        return '%s tem %s produto(s)' % (self.owner.name, self.number)
+        return '%s tem %s snap(s)' % (self.owner.name, self.number)

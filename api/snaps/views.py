@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
-from .serializers import ProductSerializer
-from .models import Product
+from .serializers import SnapSerializer
+from .models import Snap
 
 from rest_framework.exceptions import NotFound
 from rest_framework.viewsets import ModelViewSet
@@ -14,7 +14,6 @@ from rest_framework.permissions import (
 
 )
 
-from .models import Product
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -29,9 +28,9 @@ class IsAuthorOrReadOnly(BasePermission):
 
         return obj.created_by == request.user
 
-class ProductViewSet(ModelViewSet):
+class SnapViewSet(ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
-    serializer_class = ProductSerializer
+    serializer_class = SnapSerializer
 
     def get_queryset(self):
     
@@ -43,9 +42,9 @@ class ProductViewSet(ModelViewSet):
         
         owner = get_object_or_404(User, id=user_id)
 
-        products = Product.objects.filter(created_by=owner).order_by('-created_at')
+        snaps = Snap.objects.filter(created_by=owner).order_by('-created_at')
 
-        return products
+        return snaps
 
     def retrieve(self, request, *args, **kwargs):
 
@@ -57,13 +56,13 @@ class ProductViewSet(ModelViewSet):
 
         owner = get_object_or_404(User, id=user_id)
 
-        product = self.get_object()
+        snap = self.get_object()
 
-        if product.created_by != owner:
+        if snap.created_by != owner:
 
             raise NotFound(detail="Este produto não pertence a este usuário.")
 
-        serializer = self.get_serializer(product)
+        serializer = self.get_serializer(snap)
 
         return Response(serializer.data)
 
