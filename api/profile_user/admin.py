@@ -4,4 +4,4 @@ from .models import Profile
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 
-    list_display = ('by__name', 'slug', 'created_at', 'updated_at')
+    list_display = ('by', 'slug', 'created_at', 'updated_at')
