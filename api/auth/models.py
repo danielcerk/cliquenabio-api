@@ -33,25 +33,28 @@ class UserManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
 
-	name = models.CharField(max_length=255)
-	email = models.EmailField(max_length=255, unique=True)
+	name = models.CharField(max_length=255, verbose_name='Nome de usuário')
+	email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
 
-	first_name = models.CharField(max_length=30, blank=True, null=True)
-	last_name = models.CharField(max_length=150, blank=True, null=True)
+	first_name = models.CharField(max_length=30, 
+		blank=True, null=True, verbose_name='Primeiro nome')
+	last_name = models.CharField(max_length=150, 
+		blank=True, null=True, verbose_name='Último nome')
 
-	full_name = models.CharField(max_length=255, blank=True, null=True)
+	full_name = models.CharField(max_length=255, 
+		blank=True, null=True, verbose_name='Nome completo')
 
 	objects = UserManager()
 
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['name']
 
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
+	created_at = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
+	updated_at = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
 
 	is_active = models.BooleanField(default=True, verbose_name="Está ativo")
-	is_staff = models.BooleanField(default=False)
-	is_superuser = models.BooleanField(default=False)
+	is_staff = models.BooleanField(default=False, verbose_name='É moderador')
+	is_superuser = models.BooleanField(default=False, verbose_name='É superusuário')
 
 	def __str__(self):
 
