@@ -30,7 +30,6 @@ class IsAuthorOrReadOnly(BasePermission):
 
         return obj.created_by == request.user
 
-
 class GetPlansAPIView(APIView):   
 
     def get(self, request, *args, **kwargs):
@@ -88,38 +87,72 @@ class CreateSubscriptionAPIView(APIView):
 
         user = request.user
         plan_id = request.data.get('plan_id')
+        payment_method_id = request.data.get('payment_method_id')
 
-        subscription = Subscription.objects.get(user=user)
+        if not plan_id or not payment_method_id:
+            return Response({"error": "Plan ID and Payment Method ID are required."}, status=400)
 
-        stripe_subscription = stripe.Subscription.create(
-            customer=subscription.stripe_customer_id,
-            items=[{"price": plan_id}],
-        )
+        try:
+            # Obter ou criar o cliente Stripe
+            subscription = Subscription.objects.get(user=user)
 
-        price_id = stripe_subscription["items"]["data"][0]["price"]["id"]
-        price = stripe.Price.retrieve(price_id)
-        product_id = price["product"]
-        product = stripe.Product.retrieve(product_id)
+            # Associar o método de pagamento ao cliente
+            stripe.PaymentMethod.attach(
+                payment_method_id,
+                customer=subscription.stripe_customer_id,
+            )
 
-        subscription.stripe_subscription_id = stripe_subscription['id']
+            # Definir o método de pagamento padrão
+            stripe.Customer.modify(
+                subscription.stripe_customer_id,
+                invoice_settings={"default_payment_method": payment_method_id},
+            )
 
-        if product.get('name') == 'Conexão':
+            # Criar a assinatura no Stripe
+            stripe_subscription = stripe.Subscription.create(
+                customer=subscription.stripe_customer_id,
+                items=[{"price": plan_id}],  # O preço deve ser um ID de preço válido
+                expand=["latest_invoice.payment_intent"]
+            )
+            
+            # Recuperar o preço e o produto relacionado
+            price_id = stripe_subscription["items"]["data"][0]["price"]["id"]
+            price = stripe.Price.retrieve(price_id)
+            product_id = price["product"]
+            product = stripe.Product.retrieve(product_id)
 
-            subscription.name = Plan.CONEXAO
+            # Salvar a assinatura no modelo Subscription
+            subscription.stripe_subscription_id = stripe_subscription['id']
 
-        elif product.get('name') == 'Influência':
+            # Atribuir nome ao plano com base no produto
+            if product.get('name') == 'Conexão':
+                subscription.name = Plan.CONEXAO
+            elif product.get('name') == 'Influência':
+                subscription.name = Plan.INFLUENCIA
+            else:
+                raise ValueError(f"Nome do produto inesperado: {product.get('name')}")
 
-            subscription.name = Plan.INFLUENCIA
+            subscription.active = True
+            subscription.save()
 
-        else:
+            # Obter o client_secret para o pagamento da assinatura
+            client_secret = stripe_subscription['latest_invoice']['payment_intent']['client_secret']
 
-            raise ValueError(f"Nome do produto inesperado: {product.get('name')}")
-        
-        subscription.active = True
+            # Retornar o client_secret e detalhes da assinatura
+            return Response({
+                'client_secret': client_secret,
+                'message': 'Assinatura criada com sucesso',
+                'subscription_id': stripe_subscription['id']
+            })
 
-        subscription.save()
+        except stripe.error.StripeError as e:
+            # Captura erros relacionados ao Stripe e retorna uma resposta adequada
+            return Response({"error": str(e)}, status=400)
 
-        return Response({"message": "Assinatura criada com sucesso", "subscription_id": stripe_subscription['id']})
+        except Exception as e:
+            # Captura erros genéricos e retorna uma resposta adequada
+            return Response({"error": str(e)}, status=400)
+
 
 class CancelSubscriptionAPIView(APIView):
 
