@@ -227,9 +227,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/account/{account_pk}/product/:
+  /api/v1/account/{account_pk}/snap/:
     get:
-      operationId: api_v1_account_product_list
+      operationId: api_v1_account_snap_list
       parameters:
       - in: path
         name: account_pk
@@ -252,10 +252,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedProductList'
+                $ref: '#/components/schemas/PaginatedSnapList'
           description: ''
     post:
-      operationId: api_v1_account_product_create
+      operationId: api_v1_account_snap_create
       parameters:
       - in: path
         name: account_pk
@@ -268,13 +268,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
         required: true
       security:
       - jwtAuth: []
@@ -283,11 +283,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Snap'
           description: ''
-  /api/v1/account/{account_pk}/product/{id}/:
+  /api/v1/account/{account_pk}/snap/{id}/:
     get:
-      operationId: api_v1_account_product_retrieve
+      operationId: api_v1_account_snap_retrieve
       parameters:
       - in: path
         name: account_pk
@@ -309,10 +309,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Snap'
           description: ''
     put:
-      operationId: api_v1_account_product_update
+      operationId: api_v1_account_snap_update
       parameters:
       - in: path
         name: account_pk
@@ -330,13 +330,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/schemas/Snap'
         required: true
       security:
       - jwtAuth: []
@@ -345,10 +345,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Snap'
           description: ''
     patch:
-      operationId: api_v1_account_product_partial_update
+      operationId: api_v1_account_snap_partial_update
       parameters:
       - in: path
         name: account_pk
@@ -366,13 +366,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedProduct'
+              $ref: '#/components/schemas/PatchedSnap'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedProduct'
+              $ref: '#/components/schemas/PatchedSnap'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedProduct'
+              $ref: '#/components/schemas/PatchedSnap'
       security:
       - jwtAuth: []
       responses:
@@ -380,10 +380,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Snap'
           description: ''
     delete:
-      operationId: api_v1_account_product_destroy
+      operationId: api_v1_account_snap_destroy
       parameters:
       - in: path
         name: account_pk
@@ -401,6 +401,120 @@ paths:
       - jwtAuth: []
       responses:
         '204':
+          description: No response body
+  /api/v1/account/{id}/subscription/attach-payment-method/:
+    post:
+      operationId: api_v1_account_subscription_attach_payment_method_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/cancel-subscription/:
+    post:
+      operationId: api_v1_account_subscription_cancel_subscription_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/create-subscription/:
+    post:
+      operationId: api_v1_account_subscription_create_subscription_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/plan/:
+    get:
+      operationId: api_v1_account_subscription_plan_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/plans/:
+    get:
+      operationId: api_v1_account_subscription_plans_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/stripe/webhook/:
+    post:
+      operationId: api_v1_account_subscription_stripe_webhook_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/account/{id}/subscription/update-plan/:
+    post:
+      operationId: api_v1_account_subscription_update_plan_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
           description: No response body
   /api/v1/account/{id}/:
     get:
@@ -832,53 +946,14 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/v1/subscription/attach-payment-method/:
-    post:
-      operationId: api_v1_subscription_attach_payment_method_create
+  /api/v1/status/:
+    get:
+      operationId: api_v1_status_retrieve
       tags:
       - api
       security:
       - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/subscription/cancel-subscription/:
-    post:
-      operationId: api_v1_subscription_cancel_subscription_create
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/subscription/create-subscription/:
-    post:
-      operationId: api_v1_subscription_create_subscription_create
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/subscription/stripe/webhook/:
-    post:
-      operationId: api_v1_subscription_stripe_webhook_create
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/subscription/update-plan/:
-    post:
-      operationId: api_v1_subscription_update_plan_create
-      tags:
-      - api
-      security:
-      - jwtAuth: []
+      - {}
       responses:
         '200':
           description: No response body
@@ -892,14 +967,17 @@ components:
           readOnly: true
         name:
           type: string
+          title: Nome de usuário
           maxLength: 255
         first_name:
           type: string
           nullable: true
+          title: Primeiro nome
           maxLength: 30
         last_name:
           type: string
           nullable: true
+          title: Último nome
           maxLength: 150
         email:
           type: string
@@ -933,11 +1011,11 @@ components:
           maxLength: 100
         username:
           type: string
-          title: 'Usuário:'
+          title: 'Nome de usuário:'
           maxLength: 255
         created_by:
           type: integer
-          title: Criado por
+          title: Usuário
         created_at:
           type: string
           format: date-time
@@ -1022,7 +1100,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Link'
-    PaginatedProductList:
+    PaginatedSnapList:
       type: object
       required:
       - count
@@ -1044,7 +1122,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Product'
+            $ref: '#/components/schemas/Snap'
     PasswordChange:
       type: object
       properties:
@@ -1093,14 +1171,17 @@ components:
           readOnly: true
         name:
           type: string
+          title: Nome de usuário
           maxLength: 255
         first_name:
           type: string
           nullable: true
+          title: Primeiro nome
           maxLength: 30
         last_name:
           type: string
           nullable: true
+          title: Último nome
           maxLength: 150
         email:
           type: string
@@ -1132,11 +1213,11 @@ components:
           maxLength: 100
         username:
           type: string
-          title: 'Usuário:'
+          title: 'Nome de usuário:'
           maxLength: 255
         created_by:
           type: integer
-          title: Criado por
+          title: Usuário
         created_at:
           type: string
           format: date-time
@@ -1147,7 +1228,7 @@ components:
           format: date-time
           readOnly: true
           title: Atualizado em
-    PatchedProduct:
+    PatchedSnap:
       type: object
       properties:
         id:
@@ -1177,6 +1258,7 @@ components:
           writeOnly: true
         created_by:
           type: integer
+          title: Usuário
         created_at:
           type: string
           format: date-time
@@ -1197,12 +1279,39 @@ components:
         first_name:
           type: string
           nullable: true
+          title: Primeiro nome
           maxLength: 30
         last_name:
           type: string
           nullable: true
+          title: Último nome
           maxLength: 150
-    Product:
+    Register:
+      type: object
+      properties:
+        name:
+          type: string
+          title: Nome de usuário
+          maxLength: 255
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - name
+      - password
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    Snap:
       type: object
       properties:
         id:
@@ -1232,6 +1341,7 @@ components:
           writeOnly: true
         created_by:
           type: integer
+          title: Usuário
         created_at:
           type: string
           format: date-time
@@ -1242,30 +1352,6 @@ components:
       - id
       - name
       - owner
-    Register:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 255
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-          writeOnly: true
-      required:
-      - email
-      - name
-      - password
-    RestAuthDetail:
-      type: object
-      properties:
-        detail:
-          type: string
-          readOnly: true
-      required:
-      - detail
     Token:
       type: object
       description: Serializer for Token model.
@@ -1302,10 +1388,12 @@ components:
         first_name:
           type: string
           nullable: true
+          title: Primeiro nome
           maxLength: 30
         last_name:
           type: string
           nullable: true
+          title: Último nome
           maxLength: 150
       required:
       - email
