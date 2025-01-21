@@ -6,7 +6,7 @@ __pycache__/
 .env
 firebase-config.json
 db.sqlite3
-theme/
+db.sqbpro
 
 # C extensions
 *.so

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'api.profile_user',
     'api.status',
     'api.subscriptions',
+    'api.theme',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
