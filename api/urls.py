@@ -7,6 +7,11 @@ from api.snaps.views import SnapViewSet
 from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 
+# Criar item themes
+# Reformular o app subscriptions
+# Fazer push do app para corrigir error no servidor
+# Corrigir ao deletar usuário
+
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')
 
@@ -18,6 +23,7 @@ account_link_router.register(r'link', LinkViewSet, basename='account-link')
 
 urlpatterns = [
     path('api/v1/', include('api.status.urls')),
+    path('api/v1/account/<int:id>/', include('api.form_contact.urls')),
     path('api/v1/account/<int:id>/subscription/', include('api.subscriptions.urls')),
     path('api/v1/', include('api.profile_user.urls')),
     path('api/v1/auth/', include('api.auth.urls')),
