@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+from api.subscriptions.models import Subscription
+
 User = get_user_model()
 
 class Snap(models.Model):
@@ -31,6 +33,8 @@ class Snap(models.Model):
 
     def save(self, *args, **kwargs):
 
+        plan_user = Subscription.objects.get(user=self.created_by)
+
         if not self.pk:
 
             try:
@@ -41,9 +45,23 @@ class Snap(models.Model):
 
                 raise ValidationError('Perfil associado ao usuário não encontrado.')
 
-            if snap_count.number >= 10:
+            if (plan_user == 1 and plan_user.active) or (plan_user in (2, 3) and not plan_user.active):
 
-                raise ValidationError('Você não pode adicionar mais de 10 Snaps.')
+                if snap_count.number >= 10:
+
+                    raise ValidationError('Você não pode adicionar mais de 10 snaps.')
+                
+            elif plan_user == 2 and plan_user.active:
+
+                if snap_count.number >= 50:
+
+                    raise ValidationError('Você não pode adicionar mais de 50 snaps.')
+                
+            elif plan_user == 3 and plan_user.active:
+
+                if snap_count.number >= 1000:
+
+                    raise ValidationError('Você não pode adicionar mais de 1000 snaps.')
 
             snap_count.number += 1
             snap_count.save()

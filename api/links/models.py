@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from api.subscriptions.models import Subscription
 
 from .utils import extract_username_and_social_network_of_link
 
@@ -44,6 +45,8 @@ class Link(models.Model):
 
         self.social_network, self.username = extract_username_and_social_network_of_link(self.url)
 
+        plan_user = Subscription.objects.get(user=self.created_by)
+
         if not self.pk:
 
             try:
@@ -53,10 +56,24 @@ class Link(models.Model):
             except LinkCount.DoesNotExist:
 
                 raise ValidationError('Perfil associado ao usuário não encontrado.')
+            
+            if (plan_user == 1 and plan_user.active) or (plan_user in (2, 3) and not plan_user.active):
 
-            if link_count.number >= 2:
+                if link_count.number >= 2:
 
-                raise ValidationError('Você não pode adicionar mais de 2 links.')
+                    raise ValidationError('Você não pode adicionar mais de 2 links.')
+                
+            elif plan_user == 2 and plan_user.active:
+
+                if link_count.number >= 6:
+
+                    raise ValidationError('Você não pode adicionar mais de 6 links.')
+                
+            elif plan_user == 3 and plan_user.active:
+
+                if link_count.number >= 100:
+
+                    raise ValidationError('Você não pode adicionar mais de 100 links.')
 
             link_count.number += 1
             link_count.save()
