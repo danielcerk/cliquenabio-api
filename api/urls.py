@@ -7,9 +7,8 @@ from api.snaps.views import SnapViewSet
 from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 
-
-# Reformular o app subscriptions
-# Corrigir ao deletar usuário ( Testar se no postman ocorre o mesmo )
+# - Vê a questão das datas de inicio e fim
+# - remover chave de endpoint do webhook quando tudo tiver ok de settings.py
 
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')
@@ -21,13 +20,15 @@ account_link_router = NestedDefaultRouter(router, r'account', lookup='account')
 account_link_router.register(r'link', LinkViewSet, basename='account-link')
 
 urlpatterns = [
+
     path('api/v1/', include('api.status.urls')),
     path('api/v1/account/<int:id>/', include('api.form_contact.urls')),
-    path('api/v1/account/<int:id>/subscription/', include('api.subscriptions.urls')),
+    path('api/v1/subscription/', include('api.subscriptions.urls')),
     path('api/v1/', include('api.theme.urls')),
     path('api/v1/', include('api.profile_user.urls')),
     path('api/v1/auth/', include('api.auth.urls')),
     path('api/v1/', include(router.urls)),
     path('api/v1/', include(account_snap_router.urls)),
     path('api/v1/', include(account_link_router.urls)),
+
 ]
