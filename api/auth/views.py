@@ -49,6 +49,8 @@ class RegisterView(generics.CreateAPIView):
                 "message": "Você foi registrado!",
                 "user": {
                     "name": user.name,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
                     "email": user.email,
                 },
             },

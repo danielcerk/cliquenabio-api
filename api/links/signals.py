@@ -1,10 +1,8 @@
 from django.dispatch import receiver
-
+from django.conf import settings
 from django.db.models.signals import post_save, pre_delete
 
 from .models import LinkCount, Link
-
-from django.conf import settings
 
 User = settings.AUTH_USER_MODEL
 

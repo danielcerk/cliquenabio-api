@@ -12,7 +12,7 @@ class PlanAdmin(admin.ModelAdmin):
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
 
-    list_display = ('user', 'name',
+    list_display = ('user', 'plan',
         'active', 'created_at', 'updated_at')
     
-    list_filter = ('name', 'active')
+    list_filter = ('plan','active')
