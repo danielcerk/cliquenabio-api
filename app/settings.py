@@ -147,7 +147,7 @@ DATETIME_FORMAT = 'd/m/Y às H:i:s'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
 
-    'http://localhost:5173'
+    'http://localhost:3000'
 
 ]
 
@@ -161,7 +161,7 @@ else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'CliqueNaBio - API',

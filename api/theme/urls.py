@@ -10,7 +10,7 @@ router.register('themes', ThemeGlobalViewSet, basename='themes')
 
 urlpatterns = [
     
-    path('account/<int:id>/theme/', ThemeUserAPIView.as_view(), name='theme-user'),
+    path('account/theme/', ThemeUserAPIView.as_view(), name='theme-user'),
     path('', include(router.urls)),
 
 ]

@@ -15,7 +15,7 @@ class SnapSerializer(serializers.ModelSerializer):
         model = Snap
         fields = ['id', 'name', 'small_description', 
                   'owner', 'image', 'image_upload',
-                    'created_by', 'created_at']
+                    'created_by', 'created_at', 'updated_at']
         
         extra_kwargs = {
             'created_by': {'required': False},

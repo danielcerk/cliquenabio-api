@@ -45,18 +45,18 @@ class ThemeUserAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
-        user = get_object_or_404(User, pk=id)
+        user = get_object_or_404(User, pk=request.user.pk)
 
         theme_user = get_object_or_404(ThemeUser, user=user)
         serializer = ThemeUserSerializer(theme_user, many=False)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, id, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
 
-        user = get_object_or_404(User, pk=id)
+        user = get_object_or_404(User, pk=request.user.pk)
 
         theme_user = get_object_or_404(ThemeUser, user=user)
         serializer = ThemeUserSerializer(instance=theme_user, data=request.data, partial=True)

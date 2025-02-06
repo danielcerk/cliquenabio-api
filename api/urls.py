@@ -7,8 +7,9 @@ from api.snaps.views import SnapViewSet
 from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 
-# - Vê a questão das datas de inicio e fim
-# - remover chave de endpoint do webhook quando tudo tiver ok de settings.py
+# - Vê a questão das datas de inicio e fim de pagamentos
+# - Adicionar um app para monitorar usuários cadastrados, origem de trafego e tudo mais
+# - Adicionar OAuth para Google e Github
 
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')

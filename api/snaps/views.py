@@ -29,38 +29,27 @@ class IsAuthorOrReadOnly(BasePermission):
         return obj.created_by == request.user
 
 class SnapViewSet(ModelViewSet):
+
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     serializer_class = SnapSerializer
 
     def get_queryset(self):
     
-        user_id = self.kwargs.get('account_pk')
+        user = get_object_or_404(User, id=self.request.user.id)
 
-        if not user_id:
-
-            raise NotFound(detail="Nenhum ID de usuário foi informado.")
-        
-        owner = get_object_or_404(User, id=user_id)
-
-        snaps = Snap.objects.filter(created_by=owner).order_by('-created_at')
+        snaps = Snap.objects.filter(created_by=user).order_by('-created_at')
 
         return snaps
 
     def retrieve(self, request, *args, **kwargs):
 
-        user_id = self.kwargs.get('account_pk')
-
-        if not user_id:
-
-            raise NotFound(detail="Nenhum ID de usuário foi informado.")
-
-        owner = get_object_or_404(User, id=user_id)
+        owner = get_object_or_404(User, id=request.user.id)
 
         snap = self.get_object()
 
         if snap.created_by != owner:
 
-            raise NotFound(detail="Este produto não pertence a este usuário.")
+            raise NotFound(detail='Este snap não foi encontrado')
 
         serializer = self.get_serializer(snap)
 
