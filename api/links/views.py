@@ -29,43 +29,30 @@ class IsAuthorOrReadOnly(BasePermission):
         return obj.created_by == request.user
 
 class LinkViewSet(ModelViewSet):
-
-    permission_classes = (IsAuthenticatedOrReadOnly,IsAuthorOrReadOnly)
-
+    
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     serializer_class = LinkSerializer
-    queryset = Link.objects.all()
 
     def get_queryset(self):
-        
-        user_id = self.kwargs.get('account_pk')
+    
+        user = get_object_or_404(User, id=self.request.user.id)
 
-        if not user_id:
-
-            raise NotFound(detail='Nenhum ID de usuário foi informado.')
-        
-        owner = get_object_or_404(User, pk=user_id)
-
-        links = Link.objects.filter(created_by=owner).order_by('-created_at')
+        links = Link.objects.filter(created_by=user).order_by('-created_at')
 
         return links
 
     def retrieve(self, request, *args, **kwargs):
 
-        user_id = self.kwargs.get('account_pk')
-
-        if not user_id:
-
-            raise NotFound(detail="Nenhum ID de usuário foi informado.")
-
-        owner = get_object_or_404(User, id=user_id)
+        owner = get_object_or_404(User, id=request.user.id)
 
         link = self.get_object()
 
         if link.created_by != owner:
 
-            raise NotFound(detail="Este produto não pertence a este usuário.")
+            raise NotFound(detail='Este link não foi encontrado')
 
         serializer = self.get_serializer(link)
 
         return Response(serializer.data)
+
 
