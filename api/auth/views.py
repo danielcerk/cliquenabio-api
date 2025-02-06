@@ -9,9 +9,10 @@ from rest_framework.permissions import (
 
 )
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import action
 from .serializers import (
     MyTokenObtainPairSerializer,
     RegisterSerializer,
@@ -19,6 +20,7 @@ from .serializers import (
 )
 
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -57,6 +59,89 @@ class RegisterView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
+class AccountViewSet(ViewSet):
+
+    @action(detail=False, methods=['get', 'put', 'delete'], url_path='me')
+    def me(self, request):
+
+        user = get_object_or_404(User, id=request.user.id)
+
+        if request.method == 'GET':
+
+            serializer = AccountSerializer(user)
+            
+            return Response(serializer.data)
+
+        elif request.method == 'PUT':
+
+            serializer = AccountSerializer(user, data=request.data, partial=True)
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
+
+        elif request.method == 'DELETE':
+
+            user.delete()
+
+            return Response({"detail": "Usuário deletado com sucesso."})
+
+    '''def list(self, request):
+
+        self.permission_classes = (AllowAny,)
+
+        users = User.objects.all().order_by('-created_at')
+        serializer = AccountSerializer(users, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request):
+
+        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+
+        user = get_object_or_404(User, id=request.user)
+
+        serializer = AccountSerializer(user, fields=["id", 'name',
+            'first_name', 'last_name', 'email', 
+            'full_name','biografy', 'image', 'password'])
+
+        return Response(serializer.data)
+    
+
+    def update(self, request):
+
+        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+
+        user = get_object_or_404(User, id=request.user)
+
+        if not user == request.user:
+
+            raise PermissionDenied("Você não tem permissão para editar este perfil.")
+            
+            
+        serializer = AccountSerializer(User, data=request.data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    def destroy(self, request):
+
+        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+
+        user = get_object_or_404(User, id=request.user)
+
+        if user != request.user:
+
+            raise PermissionDenied("Você não tem permissão para deletar este perfil.")
+            
+        user.delete()
+
+        return Response({"detail": "Usuário deletado com sucesso."})'''
+
+
 class LogoutAPIView(APIView):
 
     permission_classes = (AllowAny,)
@@ -75,10 +160,4 @@ class LogoutAPIView(APIView):
         except Exception as e:
 
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        
-class AccountViewSet(ModelViewSet):
-
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwner)
-
-    serializer_class = AccountSerializer
-    queryset = User.objects.all()
+    

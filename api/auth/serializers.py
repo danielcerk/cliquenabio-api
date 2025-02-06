@@ -83,13 +83,14 @@ class AccountSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'name', 
             'first_name', 'last_name',
-            'email', 'biografy', 'image', 'image_upload')
+            'email', 'biografy', 'image', 'image_upload', 'password')
 
         extra_kwargs = {
             'name': {'required': False},
             'first_name': {'required': False},
             'last_name': {'required': False},
             'email': {'required': False},
+            'password': {'required': False}
         }
 
     def update(self, instance, validated_data):
@@ -99,13 +100,17 @@ class AccountSerializer(serializers.ModelSerializer):
         image_upload = validated_data.pop('image_upload', None)
 
         # Atualiza os campos do modelo User
-        for attr in ('name', 'first_name', 'last_name', 'email'):
+        for attr in (
+            'name', 'first_name', 'last_name', 'email', 'password'
+            ):
+
             if attr in validated_data:
                 setattr(instance, attr, validated_data[attr])
 
         instance.save()
 
         try:
+            
             profile = instance.profile
 
         except ObjectDoesNotExist:
