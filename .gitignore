@@ -5,6 +5,7 @@ __pycache__/
 
 .env
 firebase-config.json
+client_secret_570878019129-fecb776rahbtrauatk8a0dh2sm784grl.apps.googleusercontent.com.json
 db.sqlite3
 db.sqbpro
 

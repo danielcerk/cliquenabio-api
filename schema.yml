@@ -4,52 +4,6 @@ info:
   version: 1.0.0
   description: API V1 oficial do aplicativo CliqueNaBio
 paths:
-  /api/v1/account/:
-    get:
-      operationId: api_v1_account_list
-      parameters:
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAccountList'
-          description: ''
-    post:
-      operationId: api_v1_account_create
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Account'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Account'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Account'
-      security:
-      - jwtAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-          description: ''
   /api/v1/account/{account_pk}/link/:
     get:
       operationId: api_v1_account_link_list
@@ -119,8 +73,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this link.
+          type: string
         required: true
       tags:
       - api
@@ -145,8 +98,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this link.
+          type: string
         required: true
       tags:
       - api
@@ -181,8 +133,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this link.
+          type: string
         required: true
       tags:
       - api
@@ -217,8 +168,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this link.
+          type: string
         required: true
       tags:
       - api
@@ -402,57 +352,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/account/{id}/subscription/attach-payment-method/:
+  /api/v1/account/{id}/send-email/:
     post:
-      operationId: api_v1_account_subscription_attach_payment_method_create
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/account/{id}/subscription/cancel-subscription/:
-    post:
-      operationId: api_v1_account_subscription_cancel_subscription_create
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/account/{id}/subscription/create-subscription/:
-    post:
-      operationId: api_v1_account_subscription_create_subscription_create
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/account/{id}/subscription/plan/:
-    get:
-      operationId: api_v1_account_subscription_plan_retrieve
+      operationId: api_v1_account_send_email_create
       parameters:
       - in: path
         name: id
@@ -467,15 +369,9 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/v1/account/{id}/subscription/plans/:
+  /api/v1/account/dashboard/:
     get:
-      operationId: api_v1_account_subscription_plans_retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
+      operationId: api_v1_account_dashboard_retrieve
       tags:
       - api
       security:
@@ -484,137 +380,140 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/v1/account/{id}/subscription/stripe/webhook/:
-    post:
-      operationId: api_v1_account_subscription_stripe_webhook_create
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/account/{id}/subscription/update-plan/:
-    post:
-      operationId: api_v1_account_subscription_update_plan_create
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          description: No response body
-  /api/v1/account/{id}/:
+  /api/v1/account/form-email/:
     get:
-      operationId: api_v1_account_retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Usuário.
-        required: true
+      operationId: api_v1_account_form_email_retrieve
       tags:
       - api
       security:
       - jwtAuth: []
-      - {}
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-          description: ''
+          description: No response body
     put:
-      operationId: api_v1_account_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Usuário.
-        required: true
+      operationId: api_v1_account_form_email_update
       tags:
       - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Account'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Account'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Account'
       security:
       - jwtAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-          description: ''
-    patch:
-      operationId: api_v1_account_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Usuário.
-        required: true
+          description: No response body
+  /api/v1/account/me/:
+    get:
+      operationId: api_v1_account_me_retrieve
       tags:
       - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAccount'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAccount'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAccount'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_v1_account_me_update
+      tags:
+      - api
       security:
       - jwtAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-          description: ''
+          description: No response body
     delete:
-      operationId: api_v1_account_destroy
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Usuário.
-        required: true
+      operationId: api_v1_account_me_destroy
       tags:
       - api
       security:
       - jwtAuth: []
       responses:
         '204':
+          description: No response body
+  /api/v1/account/theme/:
+    get:
+      operationId: api_v1_account_theme_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_v1_account_theme_update
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/admin/dashboard/:
+    get:
+      operationId: api_v1_admin_dashboard_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/google/:
+    post:
+      operationId: api_v1_auth_google_create
+      description: |-
+        class used for social authentications
+        example usage for facebook with access_token
+        -------------
+        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+
+        class FacebookLogin(SocialLoginView):
+            adapter_class = FacebookOAuth2Adapter
+        -------------
+
+        example usage for facebook with code
+
+        -------------
+        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+        from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+        class FacebookLogin(SocialLoginView):
+            adapter_class = FacebookOAuth2Adapter
+            client_class = OAuth2Client
+            callback_url = 'localhost:8000'
+        -------------
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialLogin'
+          description: ''
+  /api/v1/auth/google/callback/:
+    get:
+      operationId: api_v1_auth_google_callback_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
           description: No response body
   /api/v1/auth/login/:
     post:
@@ -957,43 +856,166 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/v1/subscription/stripe/webhook/:
+    post:
+      operationId: api_v1_subscription_stripe_webhook_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/themes/:
+    get:
+      operationId: api_v1_themes_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedThemeGlobalList'
+          description: ''
+    post:
+      operationId: api_v1_themes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeGlobal'
+          description: ''
+  /api/v1/themes/{id}/:
+    get:
+      operationId: api_v1_themes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Tema.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeGlobal'
+          description: ''
+    put:
+      operationId: api_v1_themes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Tema.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ThemeGlobal'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeGlobal'
+          description: ''
+    patch:
+      operationId: api_v1_themes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Tema.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedThemeGlobal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedThemeGlobal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedThemeGlobal'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeGlobal'
+          description: ''
+    delete:
+      operationId: api_v1_themes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Tema.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
-    Account:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          title: Nome de usuário
-          maxLength: 255
-        first_name:
-          type: string
-          nullable: true
-          title: Primeiro nome
-          maxLength: 30
-        last_name:
-          type: string
-          nullable: true
-          title: Último nome
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          maxLength: 255
-        biografy:
-          type: string
-        image:
-          type: string
-          writeOnly: true
-        image_upload:
-          type: string
-          format: uri
-          writeOnly: true
-      required:
-      - id
     Link:
       type: object
       properties:
@@ -1054,29 +1076,6 @@ components:
       required:
       - email
       - password
-    PaginatedAccountList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Account'
     PaginatedLinkList:
       type: object
       required:
@@ -1123,6 +1122,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Snap'
+    PaginatedThemeGlobalList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThemeGlobal'
     PasswordChange:
       type: object
       properties:
@@ -1163,39 +1185,6 @@ components:
       - new_password2
       - token
       - uid
-    PatchedAccount:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          title: Nome de usuário
-          maxLength: 255
-        first_name:
-          type: string
-          nullable: true
-          title: Primeiro nome
-          maxLength: 30
-        last_name:
-          type: string
-          nullable: true
-          title: Último nome
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          maxLength: 255
-        biografy:
-          type: string
-        image:
-          type: string
-          writeOnly: true
-        image_upload:
-          type: string
-          format: uri
-          writeOnly: true
     PatchedLink:
       type: object
       properties:
@@ -1264,6 +1253,43 @@ components:
           format: date-time
           readOnly: true
           title: Criado em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Atualizado em
+    PatchedThemeGlobal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Nome
+          maxLength: 255
+        background_color:
+          type: string
+          title: Cor de fundo
+          maxLength: 255
+        foreground_color:
+          type: string
+          title: Cor de fonte
+          maxLength: 255
+        font_family:
+          type: string
+          title: Fonte
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Criado em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Atualizado em
     PatchedUserDetails:
       type: object
       description: User model w/o password
@@ -1293,6 +1319,16 @@ components:
           type: string
           title: Nome de usuário
           maxLength: 255
+        first_name:
+          type: string
+          nullable: true
+          title: Primeiro nome
+          maxLength: 30
+        last_name:
+          type: string
+          nullable: true
+          title: Último nome
+          maxLength: 150
         email:
           type: string
           format: email
@@ -1347,11 +1383,66 @@ components:
           format: date-time
           readOnly: true
           title: Criado em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Atualizado em
       required:
       - created_at
       - id
       - name
       - owner
+      - updated_at
+    SocialLogin:
+      type: object
+      properties:
+        access_token:
+          type: string
+        code:
+          type: string
+        id_token:
+          type: string
+    ThemeGlobal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Nome
+          maxLength: 255
+        background_color:
+          type: string
+          title: Cor de fundo
+          maxLength: 255
+        foreground_color:
+          type: string
+          title: Cor de fonte
+          maxLength: 255
+        font_family:
+          type: string
+          title: Fonte
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Criado em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Atualizado em
+      required:
+      - background_color
+      - created_at
+      - font_family
+      - foreground_color
+      - id
+      - name
+      - updated_at
     Token:
       type: object
       description: Serializer for Token model.
