@@ -20,7 +20,18 @@ from .serializers import (
 )
 
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.views import View
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+from django.conf import settings
+
+from urllib.parse import urljoin
+
+import requests
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -87,60 +98,67 @@ class AccountViewSet(ViewSet):
 
             return Response({"detail": "Usuário deletado com sucesso."})
 
-    '''def list(self, request):
+class GoogleLogin(SocialLoginView):
 
-        self.permission_classes = (AllowAny,)
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = settings.GOOGLE_OAUTH_CALLBACK_URL
+    client_class = OAuth2Client
 
-        users = User.objects.all().order_by('-created_at')
-        serializer = AccountSerializer(users, many=True)
+class GoogleLoginCallback(APIView):
 
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
 
-    def retrieve(self, request):
+        code = request.GET.get("code")
 
-        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+        if code is None:
 
-        user = get_object_or_404(User, id=request.user)
+            return Response({"error": "Código de autenticação não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = AccountSerializer(user, fields=["id", 'name',
-            'first_name', 'last_name', 'email', 
-            'full_name','biografy', 'image', 'password'])
+        token_url = "https://oauth2.googleapis.com/token"
+        data = {
+            "code": code,
+            "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": settings.GOOGLE_OAUTH_CALLBACK_URL,
+            "grant_type": "authorization_code",
+        }
 
-        return Response(serializer.data)
-    
+        response = requests.post(token_url, data=data)
 
-    def update(self, request):
+        if response.status_code != 200:
 
-        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+            return Response({"error": "Erro ao obter o token", "content": response.text}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = get_object_or_404(User, id=request.user)
+        token_data = response.json()
+        access_token = token_data.get("access_token")
 
-        if not user == request.user:
+        user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        user_info_response = requests.get(user_info_url, headers=headers)
 
-            raise PermissionDenied("Você não tem permissão para editar este perfil.")
-            
-            
-        serializer = AccountSerializer(User, data=request.data, partial=True)
+        if user_info_response.status_code != 200:
 
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+            return Response({"error": "Erro ao obter informações do usuário"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.data)
+        user_data = user_info_response.json()
 
-    def destroy(self, request):
+        email = user_data.get("email")
+        name = user_data.get("name")
 
-        self.permission_classes = [IsAuthenticatedOrReadOnly, IsOwner]
+        # Criar ou autenticar o usuário no banco de dados
+        user, created = User.objects.get_or_create(email=email, defaults={"name": name})
 
-        user = get_object_or_404(User, id=request.user)
+        # Gerar tokens JWT para autenticação
+        refresh = RefreshToken.for_user(user)
 
-        if user != request.user:
-
-            raise PermissionDenied("Você não tem permissão para deletar este perfil.")
-            
-        user.delete()
-
-        return Response({"detail": "Usuário deletado com sucesso."})'''
-
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": {
+                "email": user.email,
+                "name": user.name,
+            }
+        })
 
 class LogoutAPIView(APIView):
 
