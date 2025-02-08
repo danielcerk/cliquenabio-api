@@ -57,15 +57,18 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+
         return Response(
             {
-                "message": "Você foi registrado!",
-                "user": {
-                    "name": user.name,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    "email": user.email,
-                },
+                'name': user.name,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'refresh': str(refresh),
+                'access': access,
             },
             status=status.HTTP_201_CREATED,
         )

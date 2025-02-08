@@ -42,7 +42,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         model = User
         fields = ('name', 
-            'first_name', 'last_name', 'email', 'password')
+            'first_name', 'last_name', 
+            'email', 'password', 'terms_of_use_is_ready')
 
 
     def create(self, validated_data):
@@ -52,7 +53,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             name = validated_data['name'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            email = validated_data['email']
+            email = validated_data['email'],
+            terms_of_use_is_ready=validated_data['terms_of_use_is_ready']
 
         )
 
