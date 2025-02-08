@@ -10,14 +10,23 @@ class UserActivityLoggerMiddleware:
 
     def __call__(self, request):
 
+        if request.body:
+
+            try:
+
+                request.data = json.loads(request.body.decode('utf-8') or "{}")
+
+            except json.JSONDecodeError:
+
+                request.data = {}
+
         response = self.get_response(request)
 
         if request.user.is_authenticated and not request.path.startswith("/static/"):
 
             action_details = self.get_action_details(request)
-            
-            if action_details:
 
+            if action_details:
                 formatted_date = dateformat.format(
                     timezone.localtime(timezone.now()),
                     'H:i:s d-m-Y',
@@ -40,7 +49,7 @@ class UserActivityLoggerMiddleware:
 
             if method in ["POST", "PUT", "PATCH", "DELETE"]:
 
-                data = getattr(request, "data", request.POST or json.loads(request.body.decode('utf-8') or "{}"))
+                data = getattr(request, "data", request.POST or {})
 
                 object_id = data.get("id") or data.get("pk") or None
 
@@ -67,7 +76,7 @@ class UserActivityLoggerMiddleware:
                 elif method == "DELETE":
 
                     return f"Removeu o {model_name or 'registro'} (ID: {object_id or 'N/A'})"
-
+        
         except json.JSONDecodeError:
 
             pass
