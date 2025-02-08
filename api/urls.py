@@ -7,9 +7,8 @@ from api.snaps.views import SnapViewSet
 from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 
-# - Vê a questão das datas de inicio e fim de pagamentos
-# - Adicionar um app para monitorar usuários cadastrados, origem de trafego e tudo mais
-# - Adicionar OAuth para Google e Github
+# Vê a questão das datas de inicio e fim de pagamentos
+# Adicionar OAuth para Google e Github
 
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')
@@ -20,10 +19,12 @@ account_snap_router.register(r'snap', SnapViewSet, basename='account-snap')
 account_link_router = NestedDefaultRouter(router, r'account', lookup='account')
 account_link_router.register(r'link', LinkViewSet, basename='account-link')
 
+
 urlpatterns = [
 
+    path('api/v1/', include('api.dashboard.urls')),
     path('api/v1/', include('api.status.urls')),
-    path('api/v1/account/<int:id>/', include('api.form_contact.urls')),
+    path('api/v1/', include('api.form_contact.urls')),
     path('api/v1/subscription/', include('api.subscriptions.urls')),
     path('api/v1/', include('api.theme.urls')),
     path('api/v1/', include('api.profile_user.urls')),

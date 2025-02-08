@@ -63,6 +63,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     
 class AccountSerializer(serializers.ModelSerializer):
 
+    plan = serializers.CharField(
+        source='subscription.plan.name', read_only=True
+    )
+
     biografy = serializers.CharField(
         write_only=False, 
         source='profile.biografy', 
@@ -83,7 +87,7 @@ class AccountSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'name', 
             'first_name', 'last_name',
-            'email', 'biografy', 'image', 'image_upload', 'password')
+            'email', 'biografy', 'image', 'image_upload', 'password', 'plan')
 
         extra_kwargs = {
             'name': {'required': False},

@@ -1,5 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 
+from api.links.models import Link
+from api.links.serializers import LinkSerializer
+from api.snaps.models import Snap
+from api.snaps.serializers import SnapSerializer
 from api.analytics.utils import log_profile_view
 from .models import Profile
 
@@ -25,6 +29,12 @@ class ProfileDetailView(APIView):
 
         user = User.objects.get(pk=profile.by.pk)
 
+        links = Link.objects.filter(created_by=user).all().order_by('-created_at')
+        link_serializer = LinkSerializer(instance=links, many=True)
+
+        snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
+        snap_serializer = SnapSerializer(instance=snaps, many=True)
+
         log_profile_view(slug)
 
         return Response({
@@ -34,4 +44,6 @@ class ProfileDetailView(APIView):
             "email": user.email,
             "slug": profile.slug,
             "biografy": profile.biografy,
+            "links": link_serializer.data,
+            "snaps": snap_serializer.data,
         })
