@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Analytic, AnalyticProfileViews
+from .models import Analytic, AnalyticProfileViews, AnalyticProfileViewsPerDate
 
 @admin.register(Analytic)
 class AnalyticAdmin(admin.ModelAdmin):
@@ -25,4 +25,11 @@ class AnalyticProfileViewsAdmin(admin.ModelAdmin):
 
     list_filter = (
         'owner',
+    )
+
+@admin.register(AnalyticProfileViewsPerDate)
+class AnalytcProfileViewsPerDateModelAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'owner', 'created_at'
     )
