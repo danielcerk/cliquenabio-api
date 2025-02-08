@@ -8,6 +8,7 @@ from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 
 # Vê a questão das datas de inicio e fim de pagamentos
+# Adicionar termos de uso em models em profile ao criar uma conta
 
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')
