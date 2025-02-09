@@ -5,10 +5,12 @@ User = get_user_model()
 
 class UserLog(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    action = models.TextField()
+    user = models.ForeignKey(User, 
+        on_delete=models.CASCADE, verbose_name='Usuário')
+    action = models.TextField(verbose_name='Interação')
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True,
+        verbose_name='Data/hora')
 
     class Meta:
 

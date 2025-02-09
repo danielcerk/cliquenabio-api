@@ -46,7 +46,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 	full_name = models.CharField(max_length=255, 
 		blank=True, null=True, verbose_name='Nome completo')
 	
-	terms_of_use_is_ready = models.BooleanField(default=False)
+	terms_of_use_is_ready = models.BooleanField(
+		default=False, verbose_name='Termos de uso foi lido')
 
 	objects = UserManager()
 

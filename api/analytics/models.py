@@ -22,6 +22,8 @@ class AnalyticProfileViews(models.Model):
     class Meta:
 
         ordering = ['-number']
+        verbose_name = 'Análise de visualização do perfil'
+        verbose_name_plural = 'Análises de visualizações de perfis'
 
     def __str__(self):
 
@@ -35,6 +37,11 @@ class AnalyticProfileViewsPerDate(models.Model):
         auto_now_add=True, verbose_name='Criado em'
     )
 
+    class Meta:
+
+        verbose_name = 'Análise de visualização do perfil por data'
+        verbose_name_plural = 'Análises de visualizações de perfis por data'
+
 class Analytic(models.Model):
     
     route = models.CharField(max_length=255, unique=False, verbose_name='Rota de perfil')
@@ -44,6 +51,8 @@ class Analytic(models.Model):
     class Meta:
 
         unique_together = ('route', 'month', 'year')
+        verbose_name = 'Análise'
+        verbose_name_plural = 'Análises'
 
     def __str__(self):
 
