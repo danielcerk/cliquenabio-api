@@ -9,6 +9,7 @@ from api.profile_user.models import Profile
 from api.firebase import FirebaseManager
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
@@ -77,12 +78,13 @@ class AccountSerializer(serializers.ModelSerializer):
     )
 
     image = serializers.CharField(
-        write_only=True,
         source='profile.image',
         required=False
     )
 
     image_upload = serializers.ImageField(write_only=True, required=False)
+
+    password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
 
@@ -96,7 +98,7 @@ class AccountSerializer(serializers.ModelSerializer):
             'first_name': {'required': False},
             'last_name': {'required': False},
             'email': {'required': False},
-            'password': {'required': False}
+            'password': {'required': False},
         }
 
     def update(self, instance, validated_data):
@@ -105,10 +107,14 @@ class AccountSerializer(serializers.ModelSerializer):
         biografy = profile_data.get('biografy', None)
         image_upload = validated_data.pop('image_upload', None)
 
-        # Atualiza os campos do modelo User
+        password = validated_data.pop("password", None)
+
+        if password:
+
+            instance.password = make_password(password)
+
         for attr in (
-            'name', 'first_name', 'last_name', 'email', 'password'
-            ):
+            'name', 'first_name', 'last_name', 'email'):
 
             if attr in validated_data:
                 setattr(instance, attr, validated_data[attr])
