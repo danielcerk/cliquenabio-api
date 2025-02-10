@@ -98,3 +98,4 @@ class Subscription(models.Model):
             return False
         
         return True
+
