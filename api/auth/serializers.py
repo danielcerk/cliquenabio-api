@@ -5,11 +5,14 @@ from rest_framework.validators import UniqueValidator
 
 from django.contrib.auth import get_user_model
 
+from api.subscriptions.models import *
 from api.profile_user.models import Profile
 from api.firebase import FirebaseManager
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password
+
+from datetime import datetime
 
 User = get_user_model()
 
@@ -87,7 +90,6 @@ class AccountSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
-
         model = User
         fields = ('id', 'name', 
             'first_name', 'last_name',
@@ -117,12 +119,13 @@ class AccountSerializer(serializers.ModelSerializer):
             'name', 'first_name', 'last_name', 'email'):
 
             if attr in validated_data:
+
                 setattr(instance, attr, validated_data[attr])
 
         instance.save()
 
         try:
-            
+
             profile = instance.profile
 
         except ObjectDoesNotExist:
@@ -136,12 +139,25 @@ class AccountSerializer(serializers.ModelSerializer):
             image_url = firebase_manager.upload_image_to_storage(image_upload.read(), destination_blob_name)
 
             if image_url:
+
                 profile.image = image_url
 
         if biografy is not None:
-            
+
             profile.biografy = biografy
 
         profile.save()
+
+        subscription = instance.subscription
+
+        if subscription and subscription.cancel_at_period_end:
+
+            current_time = datetime.now()
+
+            if subscription.current_period_end < current_time:
+
+                subscription.plan = Plans.objects.get(name='GRÁTIS')
+
+                subscription.save()
 
         return instance

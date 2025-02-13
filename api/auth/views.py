@@ -50,6 +50,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 class RegisterView(generics.CreateAPIView):
+    
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
@@ -116,7 +117,7 @@ class GoogleLoginCallback(APIView):
         if code is None:
 
             return Response({"error": "Código de autenticação não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         token_url = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
