@@ -40,6 +40,7 @@ class StripeWebhookAPIView(APIView):
         data = event.get("data", {}).get("object", {})
 
         try:
+
             if event_type == "customer.subscription.created":
 
                 self.handle_subscription_created(data)
@@ -104,6 +105,8 @@ class StripeWebhookAPIView(APIView):
         subscription_id = data.get("id")
         plan = data.get("items", {}).get("data", [])[0].get("plan", {}).get("id")
 
+        status = data.get("status")
+
         stripe_customer = stripe.Customer.retrieve(customer_id)
         customer_email = stripe_customer.get('email')
 
@@ -114,16 +117,32 @@ class StripeWebhookAPIView(APIView):
         current_period_end = datetime.fromtimestamp(data.get("current_period_end"))
         cancel_at_period_end = data.get("cancel_at_period_end", False)
 
-        Subscription.objects.filter(user=user).update(
-            stripe_customer_id=customer_id,
-            stripe_subscription_id=subscription_id,
-            stripe_price_id=plan,
-            plan=get_plan,
-            active=True,
-            current_period_start=current_period_start,
-            current_period_end=current_period_end,
-            cancel_at_period_end=cancel_at_period_end,
-        )
+        subscription = Subscription.objects.get(user=user)
+
+        if subscription.stripe_price_id != plan:
+
+            print(f"Usuário {user.email} mudou de plano: {subscription.stripe_price_id} → {plan}")
+
+            subscription.plan = get_plan 
+
+        elif subscription.current_period_end != current_period_end:
+
+            print(f"Usuário {user.email} renovou a assinatura.")
+        
+        if cancel_at_period_end:
+
+            print(f"Usuário {user.email} cancelou a assinatura. Ela expira em {current_period_end}.")
+
+        subscription.stripe_customer_id = customer_id
+        subscription.stripe_subscription_id = subscription_id
+        subscription.stripe_price_id = plan
+        subscription.active = (status == "active")
+        subscription.current_period_start = current_period_start
+        subscription.current_period_end = current_period_end
+        subscription.cancel_at_period_end = cancel_at_period_end
+
+        subscription.save()
+
 
 
     def handle_subscription_deleted(self, data):
