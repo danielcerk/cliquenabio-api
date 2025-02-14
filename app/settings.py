@@ -213,7 +213,13 @@ else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS =  [
+
+    'http://localhost:3000',
+    'https://cliquenabio.vercel.app',
+    'https://clique-na-bio.vercel.app'
+
+]
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'CliqueNaBio - API',
