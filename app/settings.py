@@ -197,7 +197,9 @@ DATETIME_FORMAT = 'd/m/Y às H:i:s'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
 
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://cliquenabio.vercel.app',
+    'https://clique-na-bio.vercel.app'
 
 ]
 
