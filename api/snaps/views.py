@@ -41,6 +41,10 @@ class SnapViewSet(ModelViewSet):
 
         return snaps
 
+    def perform_create(self, serializer):
+
+        serializer.save(created_by=self.request.user)
+
     def retrieve(self, request, *args, **kwargs):
 
         owner = get_object_or_404(User, id=request.user.id)
