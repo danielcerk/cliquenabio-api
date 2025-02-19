@@ -28,13 +28,27 @@ class Link(models.Model):
     created_by = models.ForeignKey(User, 
         verbose_name='Usuário', on_delete=models.CASCADE)
     
+    title = models.CharField(
+        verbose_name='Título do link:', null=True,
+        blank=True, max_length=255
+    )
+    
     url = models.URLField(verbose_name='URL:'
         ,null=False, blank=True)
     social_network = models.CharField(max_length=100,
-        verbose_name='Rede social', null=False, blank=True)
+        verbose_name='Rede social', null=True, blank=True)
+    
+    icon = models.URLField(
+        verbose_name='URL do ícone:',
+        null=True, blank=True
+    )
 
     username = models.CharField(max_length=255, 
-        null=False, blank=True, verbose_name='Nome de usuário:')
+        null=True, blank=True, verbose_name='Nome de usuário:')
+    
+    is_profile_link = models.BooleanField(
+        default=False, verbose_name='É um link de perfil'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True,
         verbose_name='Criado em')
@@ -43,7 +57,15 @@ class Link(models.Model):
     
     def save(self, *args, **kwargs):
 
-        self.social_network, self.username = extract_username_and_social_network_of_link(self.url)
+        self.social_network, self.username, self.icon = extract_username_and_social_network_of_link(self.url)
+
+        if self.username != 'Sem usuário':
+
+            self.is_profile_link = True
+
+        else:
+
+            self.is_profile_link = False
 
         plan_user = Subscription.objects.get(user=self.created_by)
 
@@ -82,5 +104,7 @@ class Link(models.Model):
 
     def __str__(self):
 
-        return '%s (@%s) de %s' % (self.social_network, self.username,
-                                   self.created_by.name)
+        return '%s de %s' % (
+            self.social_network, 
+            self.created_by.name
+        )

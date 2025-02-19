@@ -11,12 +11,17 @@ class LinkSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Link
-        fields = ['owner', 'url', 'social_network',
-             'username', 'created_by', 
-             'created_at', 'updated_at']
+        fields = [
+
+            'owner', 'url','title', 'social_network',
+            'username', 'icon', 'is_profile_link', 
+            'created_by', 'created_at', 'updated_at'
+
+        ]
         
         extra_kwargs = {
-
+            
+            'title': {'required': False},
             'created_by': {'required': False},
 
         }
