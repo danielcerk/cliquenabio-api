@@ -6,7 +6,7 @@ import requests
 def get_favicon(url):
 
     page = requests.get(url)
-    soup = BeautifulSoup(page.text, features="lxml")
+    soup = BeautifulSoup(page.text, features='lxml')
 
     icon_link = soup.find('link', rel='shortcut icon')
 
@@ -23,52 +23,68 @@ def get_favicon(url):
 def get_title(url):
 
     page = requests.get(url)
-    soup = BeautifulSoup(page.text, features="lxml")
+    soup = BeautifulSoup(page.text, features='lxml')
 
     title = soup.find('title')
 
     return title.string
+
+def get_og_image(url):
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, features='lxml')
+
+    og_image = soup.find('meta', {'property': 'og:image'})
+
+    return og_image['content']
 
 def extract_username_and_social_network_of_link(url: str):
 
     if not isinstance(url, str):
 
         return 'Entrada inválida', 'Isso não é um link'
+    
+    try:
 
-    patterns = {
+        patterns = {
 
-        'Facebook': r'facebook\.com\/(?:profile\.php\?id=)?([^\/?&]+)',
-        'Instagram': r'instagram\.com\/([^\/?&]+)',
-        'Twitter': r'twitter\.com\/([^\/?&]+)',
-        'LinkedIn': r'linkedin\.com\/in\/([^\/?&]+)',
-        'TikTok': r'tiktok\.com\/@([^\/?&]+)',
-        'YouTube': r'youtube\.com\/(?:user|channel)\/([^\/?&]+)',
-        'Figma': r'figma\.com\/([^\/?&]+)',
-        'Dribbble': r'dribbble\.com\/([^\/?&]+)',
-        'Medium': r'medium\.com\/@([^\/?&]+)',
-        'Behance': r'behance\.net\/([^\/?&]+)',
-        'Twitch': r'twitch\.tv\/([^\/?&]+)',
-        'Reddit': r'reddit\.com\/user\/([^\/?&]+)',
-        'Bluesky': r'bsky\.app\/profile\/([^\/?&]+)',
-        'GitHub': r'github\.com\/([^\/?&]+)'
+            'Facebook': r'facebook\.com\/(?:profile\.php\?id=)?([^\/?&]+)',
+            'Instagram': r'instagram\.com\/([^\/?&]+)',
+            'Twitter': r'twitter\.com\/([^\/?&]+)',
+            'LinkedIn': r'linkedin\.com\/in\/([^\/?&]+)',
+            'TikTok': r'tiktok\.com\/@([^\/?&]+)',
+            'YouTube': r'youtube\.com\/(?:user|channel)\/([^\/?&]+)',
+            'Figma': r'figma\.com\/([^\/?&]+)',
+            'Dribbble': r'dribbble\.com\/([^\/?&]+)',
+            'Medium': r'medium\.com\/@([^\/?&]+)',
+            'Behance': r'behance\.net\/([^\/?&]+)',
+            'Twitch': r'twitch\.tv\/([^\/?&]+)',
+            'Reddit': r'reddit\.com\/user\/([^\/?&]+)',
+            'Bluesky': r'bsky\.app\/profile\/([^\/?&]+)',
+            'GitHub': r'github\.com\/([^\/?&]+)'
 
-    }
+        }
 
-    icon = get_favicon(url)
-    title = get_title(url)
+        icon = get_favicon(url)
+        og_image = get_og_image(url)
+        title = get_title(url)
 
-    for social_network, pattern in patterns.items():
+        for social_network, pattern in patterns.items():
 
-        if not pattern:
+            if not pattern:
 
-            continue
+                continue
 
-        match = re.search(pattern, url)
+            match = re.search(pattern, url)
 
-        if match:
+            if match:
 
-            username = match.group(1)
+                username = match.group(1)
 
-            return social_network, username, icon
+                return social_network, username, icon, og_image
 
-    return title, 'Sem usuário', icon
+        return title, 'Sem usuário', icon, og_image
+
+    except:
+
+        return 'O site não existe ou está fora do ar.'

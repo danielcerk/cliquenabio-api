@@ -43,6 +43,11 @@ class Link(models.Model):
         null=True, blank=True
     )
 
+    og_image = models.URLField(
+        verbose_name='Imagem da Capa:',
+        null=True, blank=True
+    )
+
     username = models.CharField(max_length=255, 
         null=True, blank=True, verbose_name='Nome de usuário:')
     
@@ -57,7 +62,7 @@ class Link(models.Model):
     
     def save(self, *args, **kwargs):
 
-        self.social_network, self.username, self.icon = extract_username_and_social_network_of_link(self.url)
+        self.social_network, self.username, self.icon, self.og_image = extract_username_and_social_network_of_link(self.url)
 
         if self.username != 'Sem usuário':
 
