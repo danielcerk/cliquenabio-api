@@ -14,7 +14,7 @@ class LinkSerializer(serializers.ModelSerializer):
         fields = [
 
             'owner', 'url','title', 'social_network',
-            'username', 'icon', 'is_profile_link', 
+            'username', 'icon', 'og_image', 'is_profile_link', 
             'created_by', 'created_at', 'updated_at'
 
         ]
