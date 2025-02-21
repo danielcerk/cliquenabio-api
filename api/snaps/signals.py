@@ -20,5 +20,5 @@ def decrement_snap_count_user(sender, instance, **kwargs):
 
     snap_count = SnapCount.objects.get(owner=instance.created_by)
     
-    snap_count.number -= 1
+    snap_count.number = max(link_count.number - 1, 0)
     snap_count.save()

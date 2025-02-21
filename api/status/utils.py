@@ -1,9 +1,5 @@
 import requests
 
-# Get all Users Conrtibuitors of API and of frontend
-
-# If same contribuitors, to disregard one
-
 class GetAttributes:
 
     url = 'https://api.github.com/repos/danielcerk/cliquenabio-api/contributors'
