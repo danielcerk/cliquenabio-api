@@ -31,5 +31,10 @@ class AnalyticProfileViewsAdmin(admin.ModelAdmin):
 class AnalytcProfileViewsPerDateModelAdmin(admin.ModelAdmin):
 
     list_display = (
-        'owner', 'created_at'
+        'owner', 'created_at', 'referrer_link',
+        'location', 'device_type'
+    )
+
+    list_filter = (
+        'owner', 'device_type'
     )
