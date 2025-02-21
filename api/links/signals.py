@@ -18,5 +18,5 @@ def decrement_link_count_user(sender, instance, **kwargs):
 
     link_count = LinkCount.objects.get(owner=instance.created_by)
     
-    link_count.number -= 1
+    link_count.number = max(link_count.number - 1, 0)
     link_count.save()

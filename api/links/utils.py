@@ -5,38 +5,63 @@ import requests
 
 def get_favicon(url):
 
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, features='lxml')
+    try:
 
-    icon_link = soup.find('link', rel='shortcut icon')
+        page = requests.get(url, timeout=5)
+        soup = BeautifulSoup(page.text, 'lxml')
 
-    if icon_link is None:
+        icon_link = soup.find('link', rel='shortcut icon') or soup.find('link', rel='icon')
 
-        icon_link = soup.find('link', rel='icon')
+        if icon_link and icon_link.has_attr('href'):
 
-    if icon_link is None:
+            return icon_link['href']
 
-        return url + '/favicon.ico'
-    
-    return icon_link['href']
+        return url.rstrip('/') + '/favicon.ico'
+
+    except Exception as e:
+
+        print(f"Erro ao buscar favicon: {e}")
+
+        return None
 
 def get_title(url):
 
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, features='lxml')
+    try:
 
-    title = soup.find('title')
+        page = requests.get(url, timeout=5)
+        soup = BeautifulSoup(page.text, 'lxml')
 
-    return title.string
+        title = soup.find('title')
+
+        return title.string.strip() if title and title.string else None
+
+    except Exception as e:
+
+        print(f"Erro ao buscar título: {e}")
+
+        return None
+
 
 def get_og_image(url):
 
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, features='lxml')
+    try:
 
-    og_image = soup.find('meta', {'property': 'og:image'})
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'lxml')
 
-    return og_image['content']
+        og_image = soup.find('meta', {'property': 'og:image'})
+
+        if og_image and 'content' in og_image.attrs:
+
+            return og_image['content']
+
+        return 'https://online.stl.tech/cdn/shop/products/image_9_80239d75-941f-42bc-b028-9c895b8a7e10.png'
+
+    except Exception as e:
+
+        print(f"Erro ao buscar imagem OG: {e}")
+
+        return None 
 
 def extract_username_and_social_network_of_link(url: str):
 
@@ -48,22 +73,23 @@ def extract_username_and_social_network_of_link(url: str):
 
         patterns = {
 
-            'Facebook': r'facebook\.com\/(?:profile\.php\?id=)?([^\/?&]+)',
-            'Instagram': r'instagram\.com\/([^\/?&]+)',
-            'Twitter': r'twitter\.com\/([^\/?&]+)',
-            'LinkedIn': r'linkedin\.com\/in\/([^\/?&]+)',
-            'TikTok': r'tiktok\.com\/@([^\/?&]+)',
-            'YouTube': r'youtube\.com\/(?:user|channel)\/([^\/?&]+)',
-            'Figma': r'figma\.com\/([^\/?&]+)',
-            'Dribbble': r'dribbble\.com\/([^\/?&]+)',
-            'Medium': r'medium\.com\/@([^\/?&]+)',
-            'Behance': r'behance\.net\/([^\/?&]+)',
-            'Twitch': r'twitch\.tv\/([^\/?&]+)',
-            'Reddit': r'reddit\.com\/user\/([^\/?&]+)',
-            'Bluesky': r'bsky\.app\/profile\/([^\/?&]+)',
-            'GitHub': r'github\.com\/([^\/?&]+)'
-
+            'Facebook': r'facebook\.com\/(?:profile\.php\?id=)?([^\/?&#]+)\/?(?:\?|#|$)',
+            'Instagram': r'instagram\.com\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Twitter': r'x\.com\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'LinkedIn': r'linkedin\.com\/in\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'TikTok': r'tiktok\.com\/@([^\/?&#]+)\/?(?:\?|#|$)',
+            'YouTube': r'youtube\.com\/(?:user|channel)\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Figma': r'figma\.com\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Dribbble': r'dribbble\.com\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Medium': r'medium\.com\/@([^\/?&#]+)\/?(?:\?|#|$)',
+            'Behance': r'behance\.net\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Twitch': r'twitch\.tv\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Reddit': r'reddit\.com\/user\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Bluesky': r'bsky\.app\/profile\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'GitHub': r'github\.com\/([^\/?&#]+)\/?(?:\?|#|$)',
+            'Pinterest': r'pinterest\.com\/([^\/?&#]+)\/?(?:\?|#|$)'
         }
+
 
         icon = get_favicon(url)
         og_image = get_og_image(url)
@@ -85,6 +111,6 @@ def extract_username_and_social_network_of_link(url: str):
 
         return title, 'Sem usuário', icon, og_image
 
-    except:
+    except Exception as e:
 
-        return 'O site não existe ou está fora do ar.'
+        return f'O site não existe ou está fora do ar: {e}'
