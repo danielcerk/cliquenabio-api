@@ -7,6 +7,8 @@ from .utils import GetAttributes
 from ..links.models import Link
 from ..snaps.models import Snap
 
+from datetime import datetime, timedelta
+
 User = get_user_model()
 
 class StatusSerializer(serializers.Serializer):
