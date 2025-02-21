@@ -35,7 +35,7 @@ class ProfileDetailView(APIView):
         snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
         snap_serializer = SnapSerializer(instance=snaps, many=True)
 
-        log_profile_view(slug)
+        log_profile_view(request, slug)
 
         return Response({
             "id": user.id,

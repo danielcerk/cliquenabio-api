@@ -35,19 +35,38 @@ class UserManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
 
-	name = models.CharField(max_length=255, verbose_name='Nome de usuário')
-	email = models.EmailField(max_length=255, unique=True, verbose_name='Email')
+	name = models.CharField(
+		max_length=255, 
+		verbose_name='Nome de usuário',
+		unique=True
+	)
+	email = models.EmailField(
+		max_length=255, 
+		unique=True, 
+		verbose_name='Email'
+	)
 
-	first_name = models.CharField(max_length=30, 
-		blank=True, null=True, verbose_name='Primeiro nome')
-	last_name = models.CharField(max_length=150, 
-		blank=True, null=True, verbose_name='Último nome')
+	first_name = models.CharField(
+		max_length=30, 
+		blank=True, null=True, 
+		verbose_name='Primeiro nome'
+	)
+	last_name = models.CharField(
+		max_length=150, 
+		blank=True, null=True, 
+		verbose_name='Último nome'
+	)
 
-	full_name = models.CharField(max_length=255, 
-		blank=True, null=True, verbose_name='Nome completo')
+	full_name = models.CharField(
+		max_length=255, 
+		blank=True, null=True, 
+		verbose_name='Nome completo'
+	)
 	
 	terms_of_use_is_ready = models.BooleanField(
-		default=False, verbose_name='Termos de uso foi lido')
+		default=False, 
+		verbose_name='Termos de uso foi lido'
+	)
 
 	objects = UserManager()
 

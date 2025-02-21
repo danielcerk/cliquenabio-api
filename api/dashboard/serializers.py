@@ -8,6 +8,8 @@ from api.links.models import Link
 from django.db import models
 from django.db.models import Sum
 
+from datetime import datetime, timedelta
+
 class DashboardSerializer(serializers.Serializer):
 
     views = serializers.IntegerField(source='analyticprofileviews.number')
@@ -24,7 +26,7 @@ class DashboardSerializer(serializers.Serializer):
 
     def get_logs(self, instance):
 
-        logs = UserLog.objects.filter(user=instance).order_by("-timestamp")
+        logs = UserLog.objects.filter(user=instance).order_by("-timestamp")[:5]
         return [{"action": log.action, "timestamp": log.timestamp} for log in logs]
 
     def get_count_views_per_date(self, instance):
@@ -35,9 +37,23 @@ class DashboardSerializer(serializers.Serializer):
             .values("created_at__date")
             .annotate(total_views=models.Sum("number"))
             .order_by("created_at__date")
-        )
+        )        
 
-        return {str(view["created_at__date"]): view["total_views"] for view in views_per_date}
+        views_dict = {view["created_at__date"]: view["total_views"] for view in views_per_date}
+
+        max_date = datetime.today().date()
+        min_date = max_date - timedelta(days=7)
+
+        complete_views = {}
+        current_date = min_date
+
+        while current_date <= max_date:
+            
+            formatted_date = current_date.strftime('%d/%m')
+            complete_views[formatted_date] = views_dict.get(current_date, 0)
+            current_date += timedelta(days=1)
+
+        return complete_views
 
 class AdminDashboardSerializer(serializers.Serializer):
 
@@ -52,8 +68,10 @@ class AdminDashboardSerializer(serializers.Serializer):
 
     class Meta:
 
-        fields = ['views', 'count_views_per_date',
-                  'snaps_count', 'links_count', 'actions']
+        fields = [
+            'views', 'count_views_per_date',
+            'snaps_count', 'links_count', 'actions'
+        ]
 
     def get_views(self, instance):
 
