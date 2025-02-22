@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
+from api.form_contact.models import FormContactEmail
+from api.subscriptions.models import Subscription
 from api.links.models import Link
 from api.links.serializers import LinkSerializer
 from api.snaps.models import Snap
@@ -9,7 +11,7 @@ from .models import Profile
 
 from rest_framework.permissions import (
 
-    AllowAny
+    AllowAny, IsAuthenticated
 
 )
 from rest_framework.views import APIView
@@ -29,6 +31,8 @@ class ProfileDetailView(APIView):
 
         user = User.objects.get(pk=profile.by.pk)
 
+        get_user_plan = Subscription.objects.get(user=user)
+
         links = Link.objects.filter(created_by=user).all().order_by('-created_at')
         link_serializer = LinkSerializer(instance=links, many=True)
 
@@ -37,8 +41,14 @@ class ProfileDetailView(APIView):
 
         log_profile_view(request, slug)
 
+        app_copyright = True if get_user_plan.plan.name == 'GRÁTIS' else False
+        form_contact = FormContactEmail.objects.get(user=user).is_activate
+
+
         return Response({
+
             "id": user.id,
+            "image": profile.image,
             "name": user.name,
             "full_name": user.full_name,
             "email": user.email,
@@ -46,4 +56,44 @@ class ProfileDetailView(APIView):
             "biografy": profile.biografy,
             "links": link_serializer.data,
             "snaps": snap_serializer.data,
+            "form_contact": form_contact,
+            "copyright": app_copyright,
+
+        })
+    
+class AuthenticatedUserProfileView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        profile = get_object_or_404(Profile, by=request.user)
+
+        user = User.objects.get(pk=profile.by.pk)
+
+        get_user_plan = Subscription.objects.get(user=user)
+
+        links = Link.objects.filter(created_by=user).all().order_by('-created_at')
+        link_serializer = LinkSerializer(instance=links, many=True)
+
+        snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
+        snap_serializer = SnapSerializer(instance=snaps, many=True)
+
+        app_copyright = True if get_user_plan.plan.name == 'GRÁTIS' else False
+        form_contact = FormContactEmail.objects.get(user=user).is_activate
+
+        return Response({
+
+            "id": user.id,
+            "image": profile.image,
+            "name": user.name,
+            "full_name": user.full_name,
+            "email": user.email,
+            "slug": profile.slug,
+            "biografy": profile.biografy,
+            "links": link_serializer.data,
+            "snaps": snap_serializer.data,
+            "form_contact": form_contact,
+            "copyright": app_copyright,
+
         })
