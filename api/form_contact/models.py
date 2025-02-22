@@ -13,7 +13,7 @@ class FormContactEmail(models.Model):
     )
 
     is_activate = models.BooleanField(
-        default=True, verbose_name='Está ativado')
+        default=False, verbose_name='Está ativado')
 
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Criado em'
