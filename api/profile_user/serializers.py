@@ -3,8 +3,6 @@ from rest_framework.serializers import ModelSerializer
 
 from .models import Profile
 
-
-
 class ProfileSerializer(ModelSerializer):
 
     owner = serializers.CharField(
@@ -15,11 +13,11 @@ class ProfileSerializer(ModelSerializer):
         source='by.full_name', read_only=True
     )
 
-    
-
     class Meta:
 
         model = Profile
-        fields = ['by', 'owner', 'full_name',
-                  'first_name', 'last_name',
-                  'image', 'slug', 'biografy']
+        fields = [
+            'by', 'owner', 'full_name',
+            'first_name', 'last_name',
+            'image', 'slug', 'biografy'
+        ]
