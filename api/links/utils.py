@@ -54,8 +54,10 @@ def get_og_image(url):
         if og_image and 'content' in og_image.attrs:
 
             return og_image['content']
+        
+        else:
 
-        return 'https://online.stl.tech/cdn/shop/products/image_9_80239d75-941f-42bc-b028-9c895b8a7e10.png'
+            return 'https://online.stl.tech/cdn/shop/products/image_9_80239d75-941f-42bc-b028-9c895b8a7e10.png'
 
     except Exception as e:
 
