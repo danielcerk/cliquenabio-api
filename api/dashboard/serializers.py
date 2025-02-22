@@ -14,20 +14,18 @@ class DashboardSerializer(serializers.Serializer):
 
     views = serializers.IntegerField(source='analyticprofileviews.number')
     count_views_per_date = serializers.SerializerMethodField()
+    traffic_origin = serializers.SerializerMethodField() #
+    locations = serializers.SerializerMethodField() #
+    devices = serializers.SerializerMethodField() #
     snaps_count = serializers.CharField(source='snapcount.number')
     links_count = serializers.CharField(source='linkcount.number')
     user = serializers.CharField(source='name')
-    logs = serializers.SerializerMethodField()
 
     class Meta:
 
-        fields = ['views', 'count_views_per_date', 
+        fields = ['views', 'count_views_per_date',
+            'traffic_origin', 'locations', 'devices', 
             'snaps_count', 'links_count', 'user', 'logs']
-
-    def get_logs(self, instance):
-
-        logs = UserLog.objects.filter(user=instance).order_by("-timestamp")[:5]
-        return [{"action": log.action, "timestamp": log.timestamp} for log in logs]
 
     def get_count_views_per_date(self, instance):
 
@@ -54,6 +52,54 @@ class DashboardSerializer(serializers.Serializer):
             current_date += timedelta(days=1)
 
         return complete_views
+    
+    def get_traffic_origin(self, instance):
+
+        all_traffic_origin =  (
+
+            AnalyticProfileViewsPerDate.objects
+            .filter(owner=instance)
+            .values("referrer_link")
+            .annotate(total_views=models.Sum("number"))
+            .order_by("created_at__date")
+
+        )
+
+        traffic_origin_dict = {view["referrer_link"]: view["total_views"] for view in all_traffic_origin}
+
+        return traffic_origin_dict
+    
+    def get_locations(self, instance):
+
+        all_location =  (
+
+            AnalyticProfileViewsPerDate.objects
+            .filter(owner=instance)
+            .values("location")
+            .annotate(total_views=models.Sum("number"))
+            .order_by("created_at__date")
+
+        )
+
+        location_dict = {view["location"]: view["total_views"] for view in all_location}
+
+        return location_dict
+    
+    def get_devices(self, instance):
+
+        all_devices =  (
+
+            AnalyticProfileViewsPerDate.objects
+            .filter(owner=instance)
+            .values("device_type")
+            .annotate(total_views=models.Sum("number"))
+            .order_by("created_at__date")
+
+        )
+
+        devices_dict = {view["device_type"]: view["total_views"] for view in all_devices}
+
+        return devices_dict
 
 class AdminDashboardSerializer(serializers.Serializer):
 
