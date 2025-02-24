@@ -198,7 +198,8 @@ CORS_ALLOWED_ORIGINS = [
 
     'http://localhost:3000',
     'https://cliquenabio.vercel.app',
-    'https://clique-na-bio.vercel.app'
+    'https://clique-na-bio.vercel.app',
+    'https://www.instagram.com'
 
 ]
 
