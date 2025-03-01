@@ -199,7 +199,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://cliquenabio.vercel.app',
     'https://clique-na-bio.vercel.app',
-    'https://www.instagram.com'
 
 ]
 
@@ -235,8 +234,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'PAGE_SIZE': 150,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
