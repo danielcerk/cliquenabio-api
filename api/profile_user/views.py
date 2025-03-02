@@ -49,6 +49,7 @@ class ProfileDetailView(APIView):
 
             "id": user.id,
             "image": profile.image,
+            "banner": profile.banner,
             "name": user.name,
             "full_name": user.full_name,
             "email": user.email,
@@ -86,6 +87,7 @@ class AuthenticatedUserProfileView(APIView):
 
             "id": user.id,
             "image": profile.image,
+            "banner": profile.banner,
             "name": user.name,
             "full_name": user.full_name,
             "email": user.email,

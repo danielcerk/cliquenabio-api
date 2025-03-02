@@ -85,15 +85,25 @@ class AccountSerializer(serializers.ModelSerializer):
         required=False
     )
 
+    banner = serializers.CharField(
+        source='profile.banner',
+        required=False
+    )
+
     image_upload = serializers.ImageField(write_only=True, required=False)
+    banner_upload = serializers.ImageField(write_only=True, required=False)
 
     password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'name', 
+        fields = (
+            'id', 'name', 
             'first_name', 'last_name',
-            'email', 'biografy', 'image', 'image_upload', 'password', 'plan')
+            'email', 'biografy', 'image', 
+            'image_upload', 'banner', 'banner_upload',
+            'password', 'plan'
+        )
 
         extra_kwargs = {
             'name': {'required': False},
@@ -108,8 +118,11 @@ class AccountSerializer(serializers.ModelSerializer):
         profile_data = validated_data.pop('profile', {})
         biografy = profile_data.get('biografy', None)
         image_upload = validated_data.pop('image_upload', None)
+        banner_upload = validated_data.pop('banner_upload', None)
 
         password = validated_data.pop("password", None)
+
+        firebase_manager = FirebaseManager()
 
         if password:
 
@@ -134,13 +147,21 @@ class AccountSerializer(serializers.ModelSerializer):
 
         if image_upload:
 
-            firebase_manager = FirebaseManager()
             destination_blob_name = f"image_profile/{image_upload.name}"
             image_url = firebase_manager.upload_image_to_storage(image_upload.read(), destination_blob_name)
 
             if image_url:
 
                 profile.image = image_url
+
+        if banner_upload:
+
+            destination_blob_name = f"banner_profile/{banner_upload.name}"
+            banner_url = firebase_manager.upload_image_to_storage(banner_upload.read(), destination_blob_name)
+
+            if banner_url:
+
+                profile.banner = banner_url
 
         if biografy is not None:
 

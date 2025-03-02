@@ -15,6 +15,11 @@ class Profile(models.Model):
     image = models.URLField(verbose_name='Foto de perfil',
     null=True, blank=True)
 
+    banner = models.URLField(
+        verbose_name='Foto do banner', null=True,
+        blank=True
+    )
+
     slug = models.SlugField(max_length=100, unique=False,
         verbose_name='Slug', null=True, blank=True)
     

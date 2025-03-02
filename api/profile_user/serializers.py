@@ -19,5 +19,5 @@ class ProfileSerializer(ModelSerializer):
         fields = [
             'by', 'owner', 'full_name',
             'first_name', 'last_name',
-            'image', 'slug', 'biografy'
+            'image', 'banner', 'slug', 'biografy'
         ]
