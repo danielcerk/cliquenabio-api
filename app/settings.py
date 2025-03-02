@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'api.analytics',
     'api.auth',
     'api.dashboard',
+    'api.feedback',
     'api.form_contact',
     'api.links',
     'api.logs',

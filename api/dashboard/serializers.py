@@ -14,9 +14,9 @@ class DashboardSerializer(serializers.Serializer):
 
     views = serializers.IntegerField(source='analyticprofileviews.number')
     count_views_per_date = serializers.SerializerMethodField()
-    traffic_origin = serializers.SerializerMethodField() #
-    locations = serializers.SerializerMethodField() #
-    devices = serializers.SerializerMethodField() #
+    traffic_origin = serializers.SerializerMethodField()
+    locations = serializers.SerializerMethodField()
+    devices = serializers.SerializerMethodField()
     snaps_count = serializers.CharField(source='snapcount.number')
     links_count = serializers.CharField(source='linkcount.number')
     user = serializers.CharField(source='name')
