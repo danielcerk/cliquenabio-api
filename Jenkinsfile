@@ -6,7 +6,7 @@ pipeline {
         stage ('Build Image') {
             steps {
                 script {
-                    dockerapp = docker.build('danielckgomes/api-cliquenabio', '-f ./src/Dockerfile ./src')
+                    dockerapp = docker.build('danielckgomes/api-cliquenabio', '-f Dockerfile .')
                     
                 }
             }
