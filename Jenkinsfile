@@ -2,9 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage ('Inicial') {
+
+        stage ('Build Image') {
             steps {
-                echo 'Iniciando a Pipeline'
+                script {
+                    dockerapp = docker.build('danielckgomes/api-cliquenabio', '-f ./src/Dockerfile ./src')
+                    
+                }
             }
         }
     }
