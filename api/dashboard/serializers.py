@@ -40,7 +40,7 @@ class DashboardSerializer(serializers.Serializer):
         views_dict = {view["created_at__date"]: view["total_views"] for view in views_per_date}
 
         max_date = datetime.today().date()
-        min_date = max_date - timedelta(days=7)
+        min_date = max_date - timedelta(days=6)
 
         complete_views = {}
         current_date = min_date
