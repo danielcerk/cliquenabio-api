@@ -3,6 +3,8 @@ import re
 from bs4 import BeautifulSoup
 import requests
 
+from urllib.parse import urlparse, urljoin
+
 def get_favicon(url):
 
     try:
@@ -10,13 +12,22 @@ def get_favicon(url):
         page = requests.get(url, timeout=5)
         soup = BeautifulSoup(page.text, 'lxml')
 
+        path = page.url.rstrip(urlparse(f'{page.url}/').path)
+
         icon_link = soup.find('link', rel='shortcut icon') or soup.find('link', rel='icon')
 
         if icon_link and icon_link.has_attr('href'):
 
-            return icon_link['href']
+            icon_href = icon_link['href']
+            parsed = urlparse(icon_href)
 
-        return url.rstrip('/') + '/favicon.ico'
+            if parsed.scheme:
+
+                return icon_href
+            
+            return urljoin(path, icon_href)
+        
+        return 'https://cdn-icons-png.flaticon.com/512/6928/6928929.png'
 
     except Exception as e:
 

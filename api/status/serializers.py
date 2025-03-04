@@ -8,6 +8,8 @@ from ..links.models import Link
 from ..snaps.models import Snap
 from .utils import GetAttributes
 
+from collections import OrderedDict
+
 User = get_user_model()
 
 class StatusSerializer(serializers.Serializer):
@@ -26,12 +28,12 @@ class StatusSerializer(serializers.Serializer):
         max_date = datetime.today().date()
         min_date = max_date - timedelta(days=6)
 
-        complete_data = {}
+        complete_data = OrderedDict()
 
         current_date = min_date
 
         while current_date <= max_date:
-
+            
             formatted_date = current_date.strftime("%d/%m")
             complete_data[formatted_date] = data_dict.get(formatted_date, 0)
             current_date += timedelta(days=1)
@@ -46,9 +48,9 @@ class StatusSerializer(serializers.Serializer):
             .annotate(total=Count('id'))
             .order_by('data')
         )
-        count_users_per_date = {
-            obj['data'].strftime("%d/%m"): obj['total'] for obj in get_all_users_count
-        }
+        count_users_per_date = OrderedDict(
+            (obj['data'].strftime("%d/%m"), obj['total']) for obj in get_all_users_count
+        )
 
         get_all_links_count = (
             Link.objects.annotate(data=TruncDate('created_at'))
@@ -56,9 +58,9 @@ class StatusSerializer(serializers.Serializer):
             .annotate(total=Count('id'))
             .order_by('data')
         )
-        count_links_per_date = {
-            obj['data'].strftime("%d/%m"): obj['total'] for obj in get_all_links_count
-        }
+        count_links_per_date = OrderedDict(
+            (obj['data'].strftime("%d/%m"), obj['total']) for obj in get_all_links_count
+        )
 
         get_all_snaps_count = (
             Snap.objects.annotate(data=TruncDate('created_at'))
@@ -66,13 +68,12 @@ class StatusSerializer(serializers.Serializer):
             .annotate(total=Count('id'))
             .order_by('data')
         )
-        count_snaps_per_date = {
-            obj['data'].strftime("%d/%m"): obj['total'] for obj in get_all_snaps_count
-        }
+        count_snaps_per_date = OrderedDict(
+            (obj['data'].strftime("%d/%m"), obj['total']) for obj in get_all_snaps_count
+        )
 
         count_users = User.objects.all().count()
         contribuitors_users = GetAttributes().get_contribuitors()
-
 
         status_app = instance.get('status_app', False)
         status_db = instance.get('status_db', False)
