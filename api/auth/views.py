@@ -28,10 +28,13 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from django.conf import settings
 
-from urllib.parse import urljoin
-
 import requests
+import hashlib
+from urllib.parse import urljoin, urlencode
+
 from django.urls import reverse
+
+from api.profile_user.models import Profile
 
 User = get_user_model()
 
@@ -55,9 +58,27 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        size = 40
+
+        email_encoded = email.lower().encode('utf-8')
+
+        email_hash = hashlib.sha256(email_encoded).hexdigest()
+
+        params = urlencode({'d': 'identicon', 's': str(size)})
+
+        url = f'https://www.gravatar.com/avatar/{email_hash}?{params}'
+
         user = serializer.save()
+
+        profile, _ = Profile.objects.get_or_create(by=user)
+
+        profile.image = url
+        profile.save()
 
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
@@ -68,6 +89,7 @@ class RegisterView(generics.CreateAPIView):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'email': user.email,
+                'image': url,
                 'refresh': str(refresh),
                 'access': access,
             },
