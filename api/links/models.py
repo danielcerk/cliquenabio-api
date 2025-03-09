@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from api.subscriptions.models import Subscription
 
+from django.core.validators import URLValidator
+
 from .utils import extract_username_and_social_network_of_link
 
 User = settings.AUTH_USER_MODEL
@@ -33,19 +35,19 @@ class Link(models.Model):
         blank=True, max_length=255
     )
     
-    url = models.URLField(verbose_name='URL:'
-        ,null=False, blank=True)
-    social_network = models.CharField(max_length=100,
+    url = models.TextField(verbose_name='URL:', null=False, 
+        blank=True, validators=[URLValidator()])
+    social_network = models.TextField(
         verbose_name='Rede social', null=True, blank=True)
     
-    icon = models.URLField(
-        verbose_name='URL do ícone:',
-        null=True, blank=True
+    icon = models.TextField(
+        verbose_name='URL do ícone:', null=False, 
+        blank=True, validators=[URLValidator()]
     )
 
-    og_image = models.URLField(
-        verbose_name='Imagem da Capa:',
-        null=True, blank=True
+    og_image = models.TextField(
+        verbose_name='Imagem da Capa:', null=False, 
+        blank=True, validators=[URLValidator()]
     )
 
     username = models.CharField(max_length=255, 
