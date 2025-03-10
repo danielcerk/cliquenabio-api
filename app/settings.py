@@ -200,6 +200,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://cliquenabio.vercel.app',
     'https://clique-na-bio.vercel.app',
+    'https://cliquenabio.com.br'
 
 ]
 
@@ -217,7 +218,8 @@ CSRF_TRUSTED_ORIGINS =  [
 
     'http://localhost:3000',
     'https://cliquenabio.vercel.app',
-    'https://clique-na-bio.vercel.app'
+    'https://clique-na-bio.vercel.app',
+    'https://cliquenabio.com.br'
 
 ]
 
