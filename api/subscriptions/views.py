@@ -1,8 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+
+from django.utils.timezone import make_aware
 from django.conf import settings
 from django.contrib.auth import get_user_model
+
 import stripe
 from .models import Subscription, Plans
 
@@ -79,8 +82,8 @@ class StripeWebhookAPIView(APIView):
         user = User.objects.get(email=customer_email)
         get_plan = Plans.objects.get(stripe_price_id=plan)
 
-        current_period_start = datetime.fromtimestamp(data.get("current_period_start"))
-        current_period_end = datetime.fromtimestamp(data.get("current_period_end"))
+        current_period_start = make_aware(datetime.fromtimestamp(data.get("current_period_start")))
+        current_period_end = make_aware(datetime.fromtimestamp(data.get("current_period_end")))
         cancel_at_period_end = data.get("cancel_at_period_end", False)
 
         Subscription.objects.update_or_create(
@@ -113,8 +116,8 @@ class StripeWebhookAPIView(APIView):
         user = User.objects.get(email=customer_email)
         get_plan = Plans.objects.get(stripe_price_id=plan)
 
-        current_period_start = datetime.fromtimestamp(data.get("current_period_start"))
-        current_period_end = datetime.fromtimestamp(data.get("current_period_end"))
+        current_period_start = make_aware(datetime.fromtimestamp(data.get("current_period_start")))
+        current_period_end = make_aware(datetime.fromtimestamp(data.get("current_period_end")))
         cancel_at_period_end = data.get("cancel_at_period_end", False)
 
         subscription = Subscription.objects.get(user=user)
