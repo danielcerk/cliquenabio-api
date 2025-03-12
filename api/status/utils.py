@@ -2,7 +2,7 @@ import requests
 
 class GetAttributes:
 
-    url = 'https://api.github.com/repos/danielcerk/cliquenabio-api/contributors'
+    url = 'https://api.github.com/repos/danielcerk/CliqueNaBio/contributors'
 
     def __init__(self):
 
