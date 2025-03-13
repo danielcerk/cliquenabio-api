@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from ..links.models import Link
 from ..snaps.models import Snap
+from ..notes.models import Note
 from .utils import GetAttributes
 
 from collections import OrderedDict
@@ -17,6 +18,7 @@ class StatusSerializer(serializers.Serializer):
     count_user_per_date = serializers.DictField()
     count_links_per_date = serializers.DictField()
     count_snaps_per_date = serializers.DictField()
+    count_notes_per_date = serializers.DictField()
 
     status_app = serializers.BooleanField(default=False)
     status_db = serializers.BooleanField(default=False)
@@ -72,6 +74,16 @@ class StatusSerializer(serializers.Serializer):
             (obj['data'].strftime("%d/%m"), obj['total']) for obj in get_all_snaps_count
         )
 
+        get_all_notes_count = (
+            Note.objects.annotate(data=TruncDate('created_at'))
+            .values('data')
+            .annotate(total=Count('id'))
+            .order_by('data')
+        )
+        count_notes_per_date = OrderedDict(
+            (obj['data'].strftime("%d/%m"), obj['total']) for obj in get_all_notes_count
+        )
+
         count_users = User.objects.all().count()
         contribuitors_users = GetAttributes().get_contribuitors()
 
@@ -81,11 +93,13 @@ class StatusSerializer(serializers.Serializer):
         count_users_per_date = self.fill_missing_dates(count_users_per_date)
         count_links_per_date = self.fill_missing_dates(count_links_per_date)
         count_snaps_per_date = self.fill_missing_dates(count_snaps_per_date)
+        count_notes_per_date = self.fill_missing_dates(count_notes_per_date)
 
         return {
             'count_user_per_date': count_users_per_date,
             'count_links_per_date': count_links_per_date,
             'count_snaps_per_date': count_snaps_per_date,
+            'count_notes_per_date': count_notes_per_date,
             'status_app': status_app,
             'status_db': status_db,
             'count_users': count_users,
