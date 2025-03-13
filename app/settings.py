@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'api.links',
     'api.logs',
     'api.snaps',
+    'api.notes',
     'api.profile_user',
     'api.status',
     'api.subscriptions',
