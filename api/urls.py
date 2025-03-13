@@ -7,6 +7,7 @@ from api.snaps.views import SnapViewSet
 from api.links.views import LinkViewSet
 from api.auth.views import AccountViewSet
 from api.feedback.views import FeedBackViewSet
+from api.notes.views import NoteViewSet
 
 router = DefaultRouter()
 router.register(r'account', AccountViewSet, basename='account')
@@ -16,6 +17,9 @@ account_snap_router.register(r'snap', SnapViewSet, basename='account-snap')
 
 account_link_router = NestedDefaultRouter(router, r'account', lookup='account')
 account_link_router.register(r'link', LinkViewSet, basename='account-link')
+
+account_note_router = NestedDefaultRouter(router, r'account', lookup='account')
+account_note_router.register(r'note', NoteViewSet, basename='account-note')
 
 account_feedback_router = NestedDefaultRouter(router, r'account', lookup='account')
 account_feedback_router.register(r'feedback', FeedBackViewSet, basename='account-feedback')
@@ -32,6 +36,7 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/', include(account_snap_router.urls)),
     path('api/v1/', include(account_link_router.urls)),
+    path('api/v1/', include(account_note_router.urls)),
     path('api/v1/', include(account_feedback_router.urls)),
 
 ]
