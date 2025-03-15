@@ -24,7 +24,8 @@ class NoteCount(models.Model):
 class Note(models.Model):
 
     text = models.TextField(
-        verbose_name='Texto:'
+        verbose_name='Texto:', null=True,
+        blank=True
     )
 
     user = models.ForeignKey(
