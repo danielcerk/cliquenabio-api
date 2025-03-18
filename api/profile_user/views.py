@@ -9,6 +9,9 @@ from api.snaps.serializers import SnapSerializer
 from api.analytics.utils import log_profile_view
 from .models import Profile
 
+from api.theme.models import ThemeUser, ThemeGlobal  # Importe os modelos de tema
+from api.theme.serializers import ThemeGlobalSerializer  # Importe o serializer do tema
+
 from rest_framework.permissions import (
 
     AllowAny, IsAuthenticated
@@ -39,6 +42,14 @@ class ProfileDetailView(APIView):
         snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
         snap_serializer = SnapSerializer(instance=snaps, many=True)
 
+        # Busca o tema do usuário
+        theme_user = ThemeUser.objects.filter(user=user).first()
+        theme_data = None
+        if theme_user:
+            theme_global = theme_user.theme
+            theme_serializer = ThemeGlobalSerializer(theme_global)
+            theme_data = theme_serializer.data
+
         log_profile_view(request, slug)
 
         app_copyright = True if get_user_plan.plan.name == 'GRÁTIS' else False
@@ -59,7 +70,7 @@ class ProfileDetailView(APIView):
             "snaps": snap_serializer.data,
             "form_contact": form_contact,
             "copyright": app_copyright,
-
+            "theme": theme_data, 
         })
     
 class AuthenticatedUserProfileView(APIView):
