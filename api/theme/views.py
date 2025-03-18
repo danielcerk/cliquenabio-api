@@ -45,26 +45,38 @@ class ThemeUserAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    
     def get(self, request, *args, **kwargs):
+        user = request.user  # Obtém o usuário autenticado
+        theme_user = ThemeUser.objects.filter(user=user).first()  # Busca o ThemeUser do usuário
 
-        user = get_object_or_404(User, pk=request.user.pk)
+        if not theme_user:
+            return Response({"error": "Tema do usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-        theme_user = get_object_or_404(ThemeUser, user=user)
-        serializer = ThemeUserSerializer(theme_user, many=False)
+        # Busca o tema global associado ao ThemeUser
+        theme_global = theme_user.theme
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Serializa o tema global para retornar os detalhes completos
+        theme_global_serializer = ThemeGlobalSerializer(theme_global)
+
+        return Response(theme_global_serializer.data, status=status.HTTP_200_OK)
+
+
 
     def put(self, request, *args, **kwargs):
-
         user = get_object_or_404(User, pk=request.user.pk)
-
         theme_user = get_object_or_404(ThemeUser, user=user)
-        serializer = ThemeUserSerializer(instance=theme_user, data=request.data, partial=True)
 
-        if serializer.is_valid():
+        # Atualiza o ThemeGlobal associado ao ThemeUser
+        theme_global = theme_user.theme
+        theme_global_serializer = ThemeGlobalSerializer(
+            instance=theme_global,
+            data=request.data,
+            partial=True
+        )
 
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if theme_global_serializer.is_valid():
+            theme_global_serializer.save()  # Salva as alterações no ThemeGlobal
+            return Response(theme_global_serializer.data, status=status.HTTP_200_OK)
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(theme_global_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
