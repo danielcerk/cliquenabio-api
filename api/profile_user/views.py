@@ -8,6 +8,8 @@ from api.snaps.models import Snap
 from api.snaps.serializers import SnapSerializer
 from api.analytics.utils import log_profile_view
 from .models import Profile
+from api.notes.models import Note  
+from api.notes.serializers import NoteSerializer  
 
 from api.theme.models import ThemeUser, ThemeGlobal  # Importe os modelos de tema
 from api.theme.serializers import ThemeGlobalSerializer  # Importe o serializer do tema
@@ -42,6 +44,9 @@ class ProfileDetailView(APIView):
         snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
         snap_serializer = SnapSerializer(instance=snaps, many=True)
 
+        notes = Note.objects.filter(user=user).all().order_by('-created_at')
+        note_serializer = NoteSerializer(instance=notes, many=True)
+
         # Busca o tema do usuário
         theme_user = ThemeUser.objects.filter(user=user).first()
         theme_data = None
@@ -68,6 +73,7 @@ class ProfileDetailView(APIView):
             "biografy": profile.biografy,
             "links": link_serializer.data,
             "snaps": snap_serializer.data,
+            "notes": note_serializer.data, 
             "form_contact": form_contact,
             "copyright": app_copyright,
             "theme": theme_data, 
@@ -91,6 +97,9 @@ class AuthenticatedUserProfileView(APIView):
         snaps = Snap.objects.filter(created_by=user).all().order_by('-created_at')
         snap_serializer = SnapSerializer(instance=snaps, many=True)
 
+        notes = Note.objects.filter(user=user).all().order_by('-created_at')
+        note_serializer = NoteSerializer(instance=notes, many=True)
+
         app_copyright = True if get_user_plan.plan.name == 'GRÁTIS' else False
         form_contact = FormContactEmail.objects.get(user=user).is_activate
 
@@ -106,6 +115,7 @@ class AuthenticatedUserProfileView(APIView):
             "biografy": profile.biografy,
             "links": link_serializer.data,
             "snaps": snap_serializer.data,
+            "notes": note_serializer.data, 
             "form_contact": form_contact,
             "copyright": app_copyright,
 
