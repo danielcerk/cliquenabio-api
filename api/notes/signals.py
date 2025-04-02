@@ -16,7 +16,7 @@ def create_note_count_user(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=Note)
 def decrement_note_count_user(sender, instance, **kwargs):
 
-    note_count = NoteCount.objects.get(user=instance.user)
+    note_count = NoteCount.objects.get(owner=instance.user)
     
     note_count.number = max(note_count.number - 1, 0)
     note_count.save()
