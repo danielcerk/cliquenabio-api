@@ -1,28 +1,48 @@
 from django.contrib import admin
+from .models import UserTheme  # Importamos apenas o novo modelo
 
-from .models import ThemeGlobal, ThemeUser
-
-@admin.register(ThemeGlobal)
-class ThemeGlobalAdmin(admin.ModelAdmin):
-
+@admin.register(UserTheme)
+class UserThemeAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 'background_color',
-        'foreground_color', 'font_family',
-        'created_at', 'updated_at'
+        'user', 
+        'background_color',
+        'foreground_color', 
+        'font_family',
+        'created_at', 
+        'updated_at'
     )
-
+    
     list_filter = (
-        'name', 'font_family', 'created_at'
+        'font_family',
+        'created_at',
+        'updated_at'
     )
-
-@admin.register(ThemeUser)
-class ThemeUserAdmin(admin.ModelAdmin):
-
-    list_display = (
-        'user', 'theme',
-        'created_at', 'updated_at'
+    
+    search_fields = (
+        'user__username',
+        'user__email',
+        'background_color',
+        'foreground_color'
     )
-
-    list_filter = (
-        'user', 'created_at'
+    
+    readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        ('Relacionamento', {
+            'fields': ('user',)
+        }),
+        ('Configurações de Tema', {
+            'fields': (
+                'background_color',
+                'foreground_color',
+                'font_family'
+            )
+        }),
+        ('Datas', {
+            'fields': (
+                'created_at',
+                'updated_at'
+            ),
+            'classes': ('collapse',)
+        })
     )

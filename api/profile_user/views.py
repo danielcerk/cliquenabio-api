@@ -10,9 +10,9 @@ from api.analytics.utils import log_profile_view
 from .models import Profile
 from api.notes.models import Note  
 from api.notes.serializers import NoteSerializer  
-
-from api.theme.models import ThemeUser, ThemeGlobal  # Importe os modelos de tema
-from api.theme.serializers import ThemeGlobalSerializer  # Importe o serializer do tema
+from api.theme.models import UserTheme  
+from api.theme.serializers import UserThemeSerializer  
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from rest_framework.permissions import (
 
@@ -47,13 +47,16 @@ class ProfileDetailView(APIView):
         notes = Note.objects.filter(user=user).all().order_by('-created_at')
         note_serializer = NoteSerializer(instance=notes, many=True)
 
-        # Busca o tema do usuário
-        theme_user = ThemeUser.objects.filter(user=user).first()
-        theme_data = None
-        if theme_user:
-            theme_global = theme_user.theme
-            theme_serializer = ThemeGlobalSerializer(theme_global)
+        try:
+            user_theme = UserTheme.objects.get(user=user)
+            theme_serializer = UserThemeSerializer(user_theme)
             theme_data = theme_serializer.data
+        except UserTheme.DoesNotExist:
+            theme_data = {
+                'background_color': '#ffffff',
+                'foreground_color': '#000000',
+                'font_family': 'Arial, sans-serif'
+            }
 
         log_profile_view(request, slug)
 
@@ -99,6 +102,17 @@ class AuthenticatedUserProfileView(APIView):
 
         notes = Note.objects.filter(user=user).all().order_by('-created_at')
         note_serializer = NoteSerializer(instance=notes, many=True)
+
+        try:
+            user_theme = UserTheme.objects.get(user=user)
+            theme_serializer = UserThemeSerializer(user_theme)
+            theme_data = theme_serializer.data
+        except UserTheme.DoesNotExist:
+            theme_data = {
+                'background_color': '#ffffff',
+                'foreground_color': '#000000',
+                'font_family': 'Arial, sans-serif'
+            }
 
         app_copyright = True if get_user_plan.plan.name == 'GRÁTIS' else False
         form_contact = FormContactEmail.objects.get(user=user).is_activate
