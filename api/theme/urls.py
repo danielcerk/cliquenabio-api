@@ -1,16 +1,6 @@
-from rest_framework.routers import DefaultRouter
-
-from .views import ThemeGlobalViewSet, ThemeUserAPIView
-
-from django.urls import path, include
-
-router = DefaultRouter()
-
-router.register('themes', ThemeGlobalViewSet, basename='themes')
+from django.urls import path
+from .views import UserThemeAPIView
 
 urlpatterns = [
-    
-    path('account/theme/', ThemeUserAPIView.as_view(), name='theme-user'),
-    path('', include(router.urls)),
-
+    path('account/theme/', UserThemeAPIView.as_view(), name='user-theme'),
 ]
